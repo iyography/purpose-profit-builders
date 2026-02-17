@@ -14,8 +14,8 @@ console.log('Supabase Environment Check:', {
   cleanedUrl: supabaseUrl
 });
 
-// Only create client if environment variables are properly configured and we're not in build time
-export const supabase = (supabaseUrl && supabaseAnonKey && typeof window !== 'undefined') 
+// Only create client if environment variables are properly configured
+export const supabase = (supabaseUrl && supabaseAnonKey) 
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 
