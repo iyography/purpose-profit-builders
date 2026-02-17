@@ -1,15 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
 // These will need to be replaced with your actual Supabase URL and anon key
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim().replace(/^n\n/, '');
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim().replace(/^n\n/, '');
 
 // Debug logging for environment variables
 console.log('Supabase Environment Check:', {
   hasUrl: !!supabaseUrl,
   hasKey: !!supabaseAnonKey,
   urlFirst10: supabaseUrl?.substring(0, 10),
-  keyFirst10: supabaseAnonKey?.substring(0, 10)
+  keyFirst10: supabaseAnonKey?.substring(0, 10),
+  urlIsValid: supabaseUrl?.startsWith('https://'),
+  cleanedUrl: supabaseUrl
 });
 
 // Only create client if environment variables are properly configured and we're not in build time
