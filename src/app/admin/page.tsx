@@ -132,12 +132,18 @@ export default function AdminPortal() {
   const loadSubmissions = async () => {
     try {
       setLoading(true);
+      console.log('Admin: Attempting to load submissions...');
       const data = await getAllQuizSubmissions();
+      console.log('Admin: Loaded submissions successfully:', data?.length || 0, 'entries');
       setSubmissions(data);
       calculateStats(data);
     } catch (err) {
+      console.error('Admin: Error loading submissions:', {
+        error: err,
+        message: (err as Error)?.message,
+        stack: (err as Error)?.stack
+      });
       setError('Failed to load quiz submissions. Please check your Supabase connection.');
-      console.error('Error loading submissions:', err);
     } finally {
       setLoading(false);
     }

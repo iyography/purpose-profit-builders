@@ -11,7 +11,10 @@ console.log('Supabase Environment Check:', {
   urlFirst10: supabaseUrl?.substring(0, 10),
   keyFirst10: supabaseAnonKey?.substring(0, 10),
   urlIsValid: supabaseUrl?.startsWith('https://'),
-  cleanedUrl: supabaseUrl
+  cleanedUrl: supabaseUrl,
+  rawUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  rawKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20),
+  clientCreated: !!(supabaseUrl && supabaseAnonKey)
 });
 
 // Only create client if environment variables are properly configured
@@ -54,16 +57,30 @@ export const submitQuizResult = async (submission: Omit<QuizSubmission, 'id' | '
 };
 
 export const getAllQuizSubmissions = async (): Promise<QuizSubmission[]> => {
+  console.log('Supabase: getAllQuizSubmissions called, client exists:', !!supabase);
+  
   if (!supabase) {
+    console.error('Supabase: Client not configured');
     throw new Error('Supabase not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.');
   }
+  
+  console.log('Supabase: Making query to focus_founders_quiz_submissions...');
   
   const { data, error } = await supabase
     .from('focus_founders_quiz_submissions')
     .select('*')
     .order('created_at', { ascending: false });
   
-  if (error) throw error;
+  console.log('Supabase: Query result:', { 
+    hasData: !!data, 
+    dataLength: data?.length || 0, 
+    error: error?.message || null 
+  });
+  
+  if (error) {
+    console.error('Supabase: Query error:', error);
+    throw error;
+  }
   return data || [];
 };
 
