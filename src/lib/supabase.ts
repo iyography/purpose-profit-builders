@@ -12,8 +12,8 @@ console.log('Supabase Environment Check:', {
   keyFirst10: supabaseAnonKey?.substring(0, 10)
 });
 
-// Only create client if environment variables are properly configured
-export const supabase = (supabaseUrl && supabaseAnonKey) 
+// Only create client if environment variables are properly configured and we're not in build time
+export const supabase = (supabaseUrl && supabaseAnonKey && typeof window !== 'undefined') 
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 

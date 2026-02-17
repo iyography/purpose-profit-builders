@@ -39,7 +39,7 @@ export default function AdminPortal() {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && typeof window !== 'undefined') {
       loadSubmissions();
     }
   }, [isAuthenticated]);
