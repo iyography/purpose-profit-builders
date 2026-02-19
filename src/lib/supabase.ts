@@ -7,36 +7,36 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 
-// Types for our database
 export interface QuizSubmission {
   id: string;
   full_name: string;
   email: string;
   phone: string;
-  track: string;
-  archetype: string;
-  archetype_name: string;
-  bottleneck?: string;
-  recommended_tier: string;
-  strike_zone: string;
-  focus: string[];
-  ignore_list: string;
-  sixty_day_path: string;
-  answers: Record<string, any>;
+  profile: string;
+  profile_name: string;
+  fico_range: string;
+  has_negatives: boolean;
+  negative_items: string[];
+  utilization: string;
+  has_two_cards: boolean;
+  in_business: boolean;
+  monthly_revenue: string;
+  occupation: string;
+  biggest_challenge: string;
+  answers: Record<string, unknown>;
   user_agent?: string;
   created_at: string;
 }
 
-// Admin functions
 export const submitQuizResult = async (submission: Omit<QuizSubmission, 'id' | 'created_at'>) => {
   if (!supabase) {
     throw new Error('Supabase not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.');
   }
-  
+
   const { data, error } = await supabase
-    .from('focus_founders_quiz_submissions')
+    .from('credit_hub_quiz_submissions')
     .insert([submission]);
-  
+
   if (error) throw error;
   return data;
 };
@@ -47,7 +47,7 @@ export const getAllQuizSubmissions = async (): Promise<QuizSubmission[]> => {
   }
 
   const { data, error } = await supabase
-    .from('focus_founders_quiz_submissions')
+    .from('credit_hub_quiz_submissions')
     .select('*')
     .order('created_at', { ascending: false });
 
@@ -59,29 +59,29 @@ export const getQuizSubmissionsByDateRange = async (startDate: string, endDate: 
   if (!supabase) {
     throw new Error('Supabase not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.');
   }
-  
+
   const { data, error } = await supabase
-    .from('focus_founders_quiz_submissions')
+    .from('credit_hub_quiz_submissions')
     .select('*')
     .gte('created_at', startDate)
     .lte('created_at', endDate)
     .order('created_at', { ascending: false });
-  
+
   if (error) throw error;
   return data || [];
 };
 
-export const getQuizSubmissionsByArchetype = async (archetype: string): Promise<QuizSubmission[]> => {
+export const getQuizSubmissionsByProfile = async (profile: string): Promise<QuizSubmission[]> => {
   if (!supabase) {
     throw new Error('Supabase not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.');
   }
-  
+
   const { data, error } = await supabase
-    .from('focus_founders_quiz_submissions')
+    .from('credit_hub_quiz_submissions')
     .select('*')
-    .eq('archetype', archetype)
+    .eq('profile', profile)
     .order('created_at', { ascending: false });
-  
+
   if (error) throw error;
   return data || [];
 };

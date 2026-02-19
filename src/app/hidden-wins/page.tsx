@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Menu, X, Archive, Trash2, Pencil } from "lucide-react";
 
-// Focus Founders theme colors
+// The Credit Hub theme colors
 const ORANGE_BG = '#fb923c'; // Orange background like yellow in BBC
 const BLUE = '#1d4ed8'; // Blue accent
 
@@ -31,21 +31,21 @@ const randomCategory = () => categories[Math.floor(Math.random() * categories.le
 const randomLevel = () => Math.floor(Math.random() * 7) + 2; // 2-8
 
 const initialWins: WinReview[] = [
-  { id: 1, name: "Sebastian Schroeder", content: "1st client since joining accelerator - Hey everyone! I want to post something super exciting that happened to me today! For the past few weeks to a month I have been working with the amazing team and all my new family in the Focus Founders Accelerator group. Before I was struggling to find clients, stay consistent and tried every way I knew how to push my business forward. Since joining the Accelerator the team has opened up new pathways for me and have helped me get dialed in so that I could take the necessary steps that would lead me to my first client. And I am proud to say that all that work has paid off! What started as a discovery call turned into my first client in over a year!", likes: 47, comments: 23, timeAgo: "1d ago", category: "Win", level: 4, date: "Jan '26", hasFire: true },
-  { id: 2, name: "Daner Bervari", content: "Focus Founders has been, since I joined, a place of strong bonds with other entrepreneurs. For the first time, I felt the pressure of accountability, and it's pushing me towards doing the work that I was avoiding. I realized that this is the only community so far that I actually want to hang out at, it's just a place of authentic bonding and support.", likes: 35, comments: 18, timeAgo: "Jun 27", category: "Win", level: 4, date: "Jun '25", hasFire: true },
-  { id: 3, name: "Amber Huttenlocker", content: "Focus Founders is warm and judgment-free. The community quietly called my authentic self to rise.", likes: 24, comments: 10, timeAgo: "3d ago", category: "Win", level: 4, date: "Jan '26" },
-  { id: 4, name: "Nathan Archer", content: "Focus Founders has helped me not feel alone in entrepreneurship. I feel connected to the people who show up to the calls and events, and realize that we're all solving similar problems, and have different advice, perspectives, and resources to share with one another. I feel like the people around me want me to win, and I want them to win. In some entrepreneurial communities, everyone's using the same strategies and building the same type of business, and here the diversity is fascinating and less of an echo chamber.", likes: 42, comments: 20, timeAgo: "Jun 27", category: "Discuss", level: 3, date: "Jun '25", hasFire: true },
-  { id: 5, name: "David Martinez", content: "My big goals are getting done. I've never been more consistent!", likes: 19, comments: 8, timeAgo: "Jun 27", category: "Win", level: 3, date: "Jun '25" },
-  { id: 6, name: "Reema Rana", content: "I'm deeply grateful for the community that's been built here. When I came across this group I was quite lost on my journey towards entrepreneurship. I knew I wanted to do this but have no idea what it looks like, what to do and how to do. Being here, surrounded by these amazing founders & entrepreneurs I don't feel lonely in my journey. It feels i am not alone, every day I learn something new from people here. Things I had no idea existed. Its made me believe in myself more too!", likes: 38, comments: 17, timeAgo: "Jul 4", category: "Win", level: 5, date: "Jul '25", hasFire: true },
-  { id: 7, name: "Alex Thompson", content: "Looking to get better at sales? Thanks to an epic epiphany on this evening's call. The dedication to the work everyone shows here is inspiring!", likes: 15, comments: 6, timeAgo: "22h ago", category: "Share", level: 6, date: "Jan '26" },
-  { id: 8, name: "Zen Gabriel", content: "Just Sold FIRST TICKET EVER - I created this snacking class concept in the Focus Founders Accelerator, and after working at it for a while I've finally sold my FIRST TICKET. Feels so much more real. I love having the skills to make this happen and I'm so excited to share fun and magic!", likes: 52, comments: 31, timeAgo: "1d ago", category: "Win", level: 3, date: "Jan '26", hasFire: true },
-  { id: 9, name: "Rainbow Bird", content: "Focus Founders is a vibrant community that helps me take aligned action toward my dream life every single day.", likes: 28, comments: 12, timeAgo: "2d ago", category: "Win", level: 5, date: "Jan '26" },
-  { id: 10, name: "Rainbow Bird", content: "I SOLD MY FIRST PROGRAM! Today, I surpassed $3,500 in income from Thy Village Healer! And we're just halfway through the month! This is Next-Level improvement in my Life (the past two months were my first $3k months of my healing practice)! I'm so stoked for where I'm at and what's ahead. Thank you all for your support, coaching, and encouragement!", likes: 45, comments: 22, timeAgo: "Aug 23", category: "Win", level: 5, date: "Aug '25", hasFire: true },
-  { id: 11, name: "Jessica Williams", content: "Finally found a place where my ADHD traits are seen as strengths, not obstacles. The accountability here is pushing me to do work I was avoiding. Authentic bonding and real support.", likes: 29, comments: 13, timeAgo: "8h ago", category: "Win", level: 4, date: "Jan '26" },
-  { id: 12, name: "Michael Brown", content: "The diversity in this community is amazing - we're all building different types of businesses but supporting each other's journeys. No echo chamber, just real perspectives and resources.", likes: 21, comments: 9, timeAgo: "12h ago", category: "Discuss", level: 5, date: "Jan '26" },
-  { id: 13, name: "Sarah Chen", content: "The energy and support in this community has completely transformed my approach to business. I finally feel like I'm not alone in this journey.", likes: 18, comments: 7, timeAgo: "15h ago", category: "Win", level: 4, date: "Jan '26" },
-  { id: 14, name: "Marcus Rodriguez", content: "This community gets it. Finally found entrepreneurs who understand that different doesn't mean broken - it means uniquely optimized. Built my best work here.", likes: 25, comments: 11, timeAgo: "18h ago", category: "Win", level: 5, date: "Jan '26" },
-  { id: 15, name: "Emily Davis", content: "The energy in this community is incredible. Watching everyone support each other and celebrate wins together - this is what entrepreneurship should feel like.", likes: 33, comments: 15, timeAgo: "20h ago", category: "Discuss", level: 7, date: "Jan '26" },
+  { id: 1, name: "Sebastian Schroeder", content: "Got 3 collections removed in my first month! Before joining The Credit Hub I had no idea where to start with my credit repair journey. The team walked me through every dispute letter, every strategy, and held me accountable. My score jumped 85 points in just 30 days. This community is the real deal!", likes: 47, comments: 23, timeAgo: "1d ago", category: "Win", level: 4, date: "Jan '26", hasFire: true },
+  { id: 2, name: "Daner Bervari", content: "The Credit Hub has been, since I joined, a place of real financial transformation. For the first time, I understood how credit actually works and felt the accountability pushing me to take action on my disputes. This is the only community where I feel like people genuinely want to see me win financially.", likes: 35, comments: 18, timeAgo: "Jun 27", category: "Win", level: 4, date: "Jun '25", hasFire: true },
+  { id: 3, name: "Amber Huttenlocker", content: "Score went from 520 to 720 in 6 months! The Credit Hub gave me a clear roadmap and the confidence to take control of my financial future.", likes: 24, comments: 10, timeAgo: "3d ago", category: "Win", level: 4, date: "Jan '26" },
+  { id: 4, name: "Nathan Archer", content: "The Credit Hub helped me understand that credit repair isn't a mystery - it's a system. The community shares real strategies, real dispute templates, and real results. I went from being denied everywhere to getting approved for a $25K business line of credit. The diversity of knowledge here is incredible - people helping each other with everything from personal credit to business funding.", likes: 42, comments: 20, timeAgo: "Jun 27", category: "Discuss", level: 3, date: "Jun '25", hasFire: true },
+  { id: 5, name: "David Martinez", content: "Approved for $50K in business funding! My credit goals are finally getting done. I've never been more consistent with my financial strategy!", likes: 19, comments: 8, timeAgo: "Jun 27", category: "Win", level: 3, date: "Jun '25" },
+  { id: 6, name: "Reema Rana", content: "I'm deeply grateful for The Credit Hub community. When I found this group I was overwhelmed by debt and had no idea how to fix my credit. Being here, surrounded by people who've been through the same struggles, I don't feel alone anymore. Every day I learn something new - dispute strategies, funding hacks, credit card stacking techniques. It's made me believe in my financial future!", likes: 38, comments: 17, timeAgo: "Jul 4", category: "Win", level: 5, date: "Jul '25", hasFire: true },
+  { id: 7, name: "Alex Thompson", content: "Just got my first tradeline added and my score bumped 40 points overnight! The knowledge shared on tonight's call was incredible. The dedication everyone shows here to helping each other level up financially is inspiring!", likes: 15, comments: 6, timeAgo: "22h ago", category: "Share", level: 6, date: "Jan '26" },
+  { id: 8, name: "Zen Gabriel", content: "Just got APPROVED for my first business credit card - $10K limit! I learned the entire business credit building process inside The Credit Hub, and after working the steps for a few months I finally got that first approval. Having the knowledge and support to make this happen is everything!", likes: 52, comments: 31, timeAgo: "1d ago", category: "Win", level: 3, date: "Jan '26", hasFire: true },
+  { id: 9, name: "Rainbow Bird", content: "The Credit Hub is a powerful community that helps me take consistent action toward financial freedom every single day.", likes: 28, comments: 12, timeAgo: "2d ago", category: "Win", level: 5, date: "Jan '26" },
+  { id: 10, name: "Rainbow Bird", content: "I just got approved for $75K in total funding across 3 business credit lines! And we're just halfway through the month! This is a next-level improvement in my financial life. My credit score has gone from 580 to 740 since joining. I'm so grateful for the coaching, strategies, and encouragement from this community!", likes: 45, comments: 22, timeAgo: "Aug 23", category: "Win", level: 5, date: "Aug '25", hasFire: true },
+  { id: 11, name: "Jessica Williams", content: "Finally found a community where people understand the credit repair journey. The step-by-step dispute process here actually works. Got 5 negative items removed in my first 60 days. Real support and real results.", likes: 29, comments: 13, timeAgo: "8h ago", category: "Win", level: 4, date: "Jan '26" },
+  { id: 12, name: "Michael Brown", content: "The knowledge in this community is incredible - people sharing strategies for everything from Section 609 disputes to business credit stacking. No gatekeeping, just real people helping each other build wealth through better credit.", likes: 21, comments: 9, timeAgo: "12h ago", category: "Discuss", level: 5, date: "Jan '26" },
+  { id: 13, name: "Sarah Chen", content: "The strategies and support in this community completely transformed my credit profile. Went from a 490 to a 695 and just got approved for my first home loan. I'm in tears!", likes: 18, comments: 7, timeAgo: "15h ago", category: "Win", level: 4, date: "Jan '26" },
+  { id: 14, name: "Marcus Rodriguez", content: "This community gets it. Finally found people who understand that bad credit doesn't define you - it's just a starting point. Built my entire business funding portfolio through strategies I learned here.", likes: 25, comments: 11, timeAgo: "18h ago", category: "Win", level: 5, date: "Jan '26" },
+  { id: 15, name: "Emily Davis", content: "The energy in this community is incredible. Watching everyone celebrate each other's credit score jumps and funding approvals - this is what financial empowerment looks like.", likes: 33, comments: 15, timeAgo: "20h ago", category: "Discuss", level: 7, date: "Jan '26" },
 ];
 
 export default function HiddenWins() {
@@ -61,7 +61,7 @@ export default function HiddenWins() {
   // Draggable wins state - load from localStorage if available
   const [wins, setWins] = useState<WinReview[]>(() => {
     try {
-      const savedOrder = localStorage.getItem('focusFoundersWinsOrder');
+      const savedOrder = localStorage.getItem('theCreditHubWinsOrder');
       if (savedOrder) {
         const orderIds = JSON.parse(savedOrder) as number[];
         if (Array.isArray(orderIds)) {
@@ -94,7 +94,7 @@ export default function HiddenWins() {
       return;
     }
     const orderIds = wins.map(w => w.id);
-    localStorage.setItem('focusFoundersWinsOrder', JSON.stringify(orderIds));
+    localStorage.setItem('theCreditHubWinsOrder', JSON.stringify(orderIds));
   }, [wins]);
 
   // Edit state
@@ -112,7 +112,7 @@ export default function HiddenWins() {
   // Bucket for hidden cards - load from localStorage
   const [hiddenCardIds, setHiddenCardIds] = useState<number[]>(() => {
     try {
-      const saved = localStorage.getItem('focusFoundersWinsHidden');
+      const saved = localStorage.getItem('theCreditHubWinsHidden');
       if (saved) {
         const parsed = JSON.parse(saved) as number[];
         return Array.isArray(parsed) ? parsed : [];
@@ -132,7 +132,7 @@ export default function HiddenWins() {
       hasLoadedHidden.current = true;
       return;
     }
-    localStorage.setItem('focusFoundersWinsHidden', JSON.stringify(hiddenCardIds));
+    localStorage.setItem('theCreditHubWinsHidden', JSON.stringify(hiddenCardIds));
   }, [hiddenCardIds]);
 
   // Guide positioning (draggable like hidden-reviews)
@@ -482,7 +482,7 @@ export default function HiddenWins() {
           <div className="flex items-center justify-between h-16">
             <a href="/" className="flex items-center space-x-3">
               <span className="font-bold font-space-grotesk text-white" style={{ fontSize: 'clamp(1.05rem, 2vw, 1.35rem)' }}>
-                Focus Founders
+                The Credit Hub
               </span>
             </a>
 
@@ -801,7 +801,7 @@ export default function HiddenWins() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-8">
             <a href="/" className="flex-shrink-0">
               <span className="font-bold text-2xl" style={{ color: BLUE }}>
-                Focus Founders
+                The Credit Hub
               </span>
             </a>
 
@@ -809,7 +809,7 @@ export default function HiddenWins() {
               <a href="/" className="transition-colors duration-200 font-space-grotesk" style={{ color: BLUE }}>
                 Home
               </a>
-              <a href="https://www.skool.com/focus-founders-free/about" target="_blank" rel="noopener noreferrer" className="transition-colors duration-200 font-space-grotesk" style={{ color: BLUE }}>
+              <a href="https://www.skool.com/tch" target="_blank" rel="noopener noreferrer" className="transition-colors duration-200 font-space-grotesk" style={{ color: BLUE }}>
                 Community
               </a>
             </div>
@@ -817,7 +817,7 @@ export default function HiddenWins() {
 
           <div className="w-full flex justify-center pt-6" style={{ borderTop: `1px solid ${BLUE}30` }}>
             <p className="text-sm font-space-grotesk" style={{ color: BLUE, opacity: 0.7 }}>
-              © 2026 Focus Founders. All rights reserved.
+              © 2026 The Credit Hub. All rights reserved.
             </p>
           </div>
         </div>

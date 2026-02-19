@@ -1,20 +1,6 @@
 import type { Metadata } from "next";
-import { Parisienne, Cormorant_Garamond, Space_Grotesk, Inter } from "next/font/google";
+import { Space_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
-
-const parisienne = Parisienne({
-  weight: "400",
-  variable: "--font-parisienne",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const cormorant = Cormorant_Garamond({
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const spaceGrotesk = Space_Grotesk({
   weight: ["400", "500", "600", "700"],
@@ -31,31 +17,31 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Focus Founders | Neurodivergent Entrepreneurs Community",
-  description: "Stop fighting your ADHD. Focus Founders is where neurodivergent entrepreneurs build businesses that work with their brains, not against them. Free forever.",
+  title: "The Credit Hub | Credit Repair & Funding Community",
+  description: "Fix your credit. Secure $50K-$250K in funding. Build a funding business using the same system behind $30M+ secured. Take the free Credit GPS Quiz.",
   icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
+    icon: "/credit-hub-logo.svg",
+    shortcut: "/credit-hub-logo.svg",
+    apple: "/credit-hub-logo.svg",
   },
   openGraph: {
-    title: "Focus Founders | Neurodivergent Entrepreneurs Community",
-    description: "Stop fighting your ADHD. Focus Founders is where neurodivergent entrepreneurs build businesses that work with their brains, not against them. Free forever.",
+    title: "The Credit Hub | Credit Repair & Funding Community",
+    description: "Fix your credit. Secure $50K-$250K in funding. Build a funding business using the same system behind $30M+ secured.",
     images: [
       {
-        url: "/logo.png",
+        url: "/credit-hub-logo.svg",
         width: 1200,
         height: 630,
-        alt: "Focus Founders - Neurodivergent Entrepreneurs Community",
+        alt: "The Credit Hub - Credit Repair & Funding Community",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Focus Founders | Neurodivergent Entrepreneurs Community",
-    description: "Stop fighting your ADHD. Focus Founders is where neurodivergent entrepreneurs build businesses that work with their brains, not against them. Free forever.",
-    images: ["/logo.png"],
+    title: "The Credit Hub | Credit Repair & Funding Community",
+    description: "Fix your credit. Secure $50K-$250K in funding. Build a funding business using the same system behind $30M+ secured.",
+    images: ["/credit-hub-logo.svg"],
   },
 };
 
@@ -67,7 +53,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${parisienne.variable} ${cormorant.variable} ${spaceGrotesk.variable} ${inter.variable} antialiased`}
+        className={`${spaceGrotesk.variable} ${inter.variable} antialiased`}
         suppressHydrationWarning
       >
         {children}

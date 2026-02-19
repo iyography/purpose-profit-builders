@@ -15,8 +15,8 @@ export default function Navbar({ hideNavLinks = false }: { hideNavLinks?: boolea
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white/95 backdrop-blur-md shadow-sm ${
-        isScrolled ? "py-2" : "py-3"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white/95 backdrop-blur-md border-b border-orange-vivid/10 ${
+        isScrolled ? "py-2 shadow-sm" : "py-3"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
@@ -26,9 +26,9 @@ export default function Navbar({ hideNavLinks = false }: { hideNavLinks?: boolea
             href="/"
             className="hover:opacity-80 transition-all duration-300"
           >
-            <img 
-              src="/logo.png" 
-              alt="Focus Founders" 
+            <img
+              src="/credit-hub-logo.svg"
+              alt="The Credit Hub"
               className="h-12 md:h-15 w-auto"
             />
           </a>
@@ -37,28 +37,28 @@ export default function Navbar({ hideNavLinks = false }: { hideNavLinks?: boolea
           {!hideNavLinks && (
             <div className="hidden md:flex items-center gap-8">
               <a
-                href="/#why"
-                className="font-sans text-sm text-gray-600 hover:text-black transition-colors"
+                href="/#about"
+                className="font-sans text-sm text-charcoal/60 hover:text-orange-vivid transition-colors"
               >
                 About
               </a>
               <a
-                href="/#features"
-                className="font-sans text-sm text-gray-600 hover:text-black transition-colors"
+                href="/#whats-inside"
+                className="font-sans text-sm text-charcoal/60 hover:text-orange-vivid transition-colors"
               >
-                Features
+                What&apos;s Inside
               </a>
               <a
-                href="/#for-you"
-                className="font-sans text-sm text-gray-600 hover:text-black transition-colors"
+                href="/#who-its-for"
+                className="font-sans text-sm text-charcoal/60 hover:text-orange-vivid transition-colors"
               >
-                For You
+                Who It&apos;s For
               </a>
               <a
                 href="/quiz"
-                className="font-sans text-sm text-gray-600 hover:text-black transition-colors"
+                className="font-sans text-sm text-charcoal/60 hover:text-orange-vivid transition-colors"
               >
-                Quiz
+                Credit GPS
               </a>
             </div>
           )}
@@ -67,15 +67,15 @@ export default function Navbar({ hideNavLinks = false }: { hideNavLinks?: boolea
           <div className="flex items-center gap-3">
             <a
               href="/quiz"
-              className="font-sans text-xs tracking-widest uppercase px-6 py-2 bg-orange-500 text-black hover:bg-orange-400 transition-all duration-300 rounded-sm"
+              className="font-sans text-xs tracking-widest uppercase px-6 py-2 bg-orange-vivid text-white hover:bg-orange-deep transition-all duration-300 rounded-sm"
             >
-              Take Quiz
+              Credit GPS Quiz
             </a>
             <a
-              href="https://www.skool.com/focus-founders-free/about"
-              className="font-sans text-xs tracking-widest uppercase px-6 py-2 bg-yellow-500 text-black hover:bg-yellow-400 transition-all duration-300 rounded-sm"
+              href="https://www.skool.com/tch"
+              className="hidden sm:inline-block font-sans text-xs tracking-widest uppercase px-6 py-2 border border-orange-vivid text-orange-vivid hover:bg-orange-vivid hover:text-white transition-all duration-300 rounded-sm"
             >
-              Join Focus Founders
+              Join The Credit Hub
             </a>
           </div>
         </div>

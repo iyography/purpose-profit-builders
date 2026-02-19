@@ -1,155 +1,122 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
-interface Dot {
-  id: number;
+interface Particle {
   x: number;
   y: number;
   size: number;
-  speed: number;
+  speedY: number;
+  speedX: number;
   opacity: number;
-  shape: 'circle' | 'square' | 'triangle';
+  color: string;
+  phase: number;
 }
 
+const COLORS = ['#FF6B00', '#FF4500', '#FB923C', '#F59E0B', '#FF6347'];
+const PARTICLE_COUNT = 100;
+const CONNECTION_DISTANCE = 120;
+const CONNECTION_OPACITY = 0.08;
+
 export default function FloatingDots() {
-  const [dots, setDots] = useState<Dot[]>([]);
-  const [mounted, setMounted] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particlesRef = useRef<Particle[]>([]);
+  const animFrameRef = useRef<number>(0);
 
   useEffect(() => {
-    setMounted(true);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Initialize particles
+    const particles: Particle[] = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 4 + 1.5,
+        speedY: Math.random() * 0.6 + 0.15,
+        speedX: (Math.random() - 0.5) * 0.3,
+        opacity: Math.random() * 0.4 + 0.08,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+    particlesRef.current = particles;
+
+    let time = 0;
+
+    const animate = () => {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      time += 0.01;
+
+      // Draw connections between nearby particles
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < CONNECTION_DISTANCE) {
+            const opacity = CONNECTION_OPACITY * (1 - dist / CONNECTION_DISTANCE);
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(255, 107, 0, ${opacity})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Update and draw particles
+      for (const p of particles) {
+        p.y -= p.speedY;
+        p.x += Math.sin(time + p.phase) * 0.3 + p.speedX;
+
+        if (p.y < -10) {
+          p.y = canvas.height + 10;
+          p.x = Math.random() * canvas.width;
+        }
+        if (p.x < -10) p.x = canvas.width + 10;
+        if (p.x > canvas.width + 10) p.x = -10;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.opacity;
+        ctx.shadowBlur = p.size * 3;
+        ctx.shadowColor = p.color;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1;
+      }
+
+      animFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      cancelAnimationFrame(animFrameRef.current);
+    };
   }, []);
 
-  useEffect(() => {
-    if (!mounted) return;
-    
-    console.log('FloatingDots: Starting animation setup');
-    
-    const generateDots = () => {
-      const newDots: Dot[] = [];
-      const width = typeof window !== 'undefined' ? window.innerWidth : 1200;
-      const height = typeof window !== 'undefined' ? window.innerHeight : 800;
-      
-      for (let i = 0; i < 150; i++) {
-        newDots.push({
-          id: i,
-          x: Math.random() * width,
-          y: Math.random() * height, // Start dots across the entire screen
-          size: Math.random() * 12 + 8, // Make dots bigger
-          speed: Math.random() * 2 + 0.5,
-          opacity: Math.random() * 0.7 + 0.3, // Make more visible
-          shape: ['circle', 'square', 'triangle'][Math.floor(Math.random() * 3)] as 'circle' | 'square' | 'triangle'
-        });
-      }
-      console.log('FloatingDots: Generated', newDots.length, 'dots');
-      setDots(newDots);
-    };
-
-    generateDots();
-
-    const animateDots = () => {
-      setDots(prevDots => 
-        prevDots.map(dot => {
-          let newY = dot.y - dot.speed;
-          let newX = dot.x;
-          
-          const width = typeof window !== 'undefined' ? window.innerWidth : 1200;
-          const height = typeof window !== 'undefined' ? window.innerHeight : 800;
-          
-          if (newY < -50) {
-            newY = height + 50;
-            newX = Math.random() * width;
-          }
-          
-          return { ...dot, y: newY, x: newX };
-        })
-      );
-    };
-
-    const interval = setInterval(animateDots, 50);
-    
-    return () => clearInterval(interval);
-  }, [mounted]);
-
-  const renderShape = (dot: Dot) => {
-    const baseStyle = {
-      position: 'absolute' as const,
-      left: `${dot.x}px`,
-      top: `${dot.y}px`,
-      width: `${dot.size}px`,
-      height: `${dot.size}px`,
-      opacity: dot.opacity,
-      pointerEvents: 'none' as const,
-    };
-
-    switch (dot.shape) {
-      case 'circle':
-        return (
-          <div
-            key={dot.id}
-            style={{
-              ...baseStyle,
-              backgroundColor: '#f97316',
-              borderRadius: '50%',
-              boxShadow: '0 0 10px rgba(249, 115, 22, 0.3)',
-            }}
-          />
-        );
-      case 'square':
-        return (
-          <div
-            key={dot.id}
-            style={{
-              ...baseStyle,
-              backgroundColor: '#ea580c',
-              borderRadius: '2px',
-              boxShadow: '0 0 8px rgba(234, 88, 12, 0.3)',
-            }}
-          />
-        );
-      case 'triangle':
-        return (
-          <div
-            key={dot.id}
-            style={{
-              ...baseStyle,
-              width: 0,
-              height: 0,
-              borderLeft: `${dot.size / 2}px solid transparent`,
-              borderRight: `${dot.size / 2}px solid transparent`,
-              borderBottom: `${dot.size}px solid #fb923c`,
-              filter: 'drop-shadow(0 0 6px rgba(251, 146, 60, 0.3))',
-            }}
-          />
-        );
-    }
-  };
-
-  if (!mounted) {
-    return null;
-  }
-
-  console.log('FloatingDots: Rendering', dots.length, 'dots');
-
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none z-0" style={{backgroundColor: 'rgba(255, 0, 0, 0.1)'}}>
-      {dots.map(dot => (
-        <div
-          key={dot.id}
-          style={{
-            position: 'absolute',
-            left: `${dot.x}px`,
-            top: `${dot.y}px`,
-            width: `${dot.size}px`,
-            height: `${dot.size}px`,
-            backgroundColor: '#f97316',
-            borderRadius: '50%',
-            opacity: dot.opacity,
-            pointerEvents: 'none',
-            zIndex: 1
-          }}
-        />
-      ))}
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 pointer-events-none z-0"
+      style={{ width: '100vw', height: '100vh' }}
+    />
   );
 }

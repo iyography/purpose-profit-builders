@@ -15,9 +15,9 @@ const APPROVED_EMAILS = [
 ];
 
 const DEFAULT_PASSWORDS: { [key: string]: string } = {
-  'davidiya3@gmail.com': 'FocusForever7!',
-  'inbillsmind@gmail.com': 'FocusForever7!',
-  'rexloyer@gmail.com': 'FocusForever7!',
+  'davidiya3@gmail.com': 'CreditHub2026!',
+  'inbillsmind@gmail.com': 'CreditHub2026!',
+  'rexloyer@gmail.com': 'CreditHub2026!',
 };
 
 export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
@@ -59,7 +59,7 @@ export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
     }
 
     setTimeout(() => {
-      localStorage.setItem('focusFoundersAdminEmail', email);
+      localStorage.setItem('creditHubAdminEmail', email);
       onAuthenticate(email);
       setLoading(false);
     }, 1000);
@@ -93,8 +93,8 @@ export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
           <div className="max-w-md w-full space-y-8">
             <div className="text-center">
               <img
-                src="/logo.png"
-                alt="Focus Founders"
+                src="/credit-hub-logo.svg"
+                alt="The Credit Hub"
                 className="mx-auto h-16 w-auto"
               />
               <h2 className="mt-6 text-3xl font-bold text-gray-900">
@@ -162,8 +162,8 @@ export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <img
-              src="/logo.png"
-              alt="Focus Founders"
+              src="/credit-hub-logo.svg"
+              alt="The Credit Hub"
               className="mx-auto h-16 w-auto"
             />
             <h2 className="mt-6 text-3xl font-bold text-gray-900">
@@ -243,7 +243,7 @@ export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
                 Forgot your password?
               </button>
               <p className="text-xs text-gray-500">
-                Only authorized Focus Founders administrators can access this portal.
+                Only authorized Credit Hub administrators can access this portal.
               </p>
             </div>
           </form>

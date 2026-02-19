@@ -1,233 +1,93 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
-import { businessTypes } from "../../lib/quiz/business-types";
-import { growthStages } from "../../lib/quiz/growth-stages";
-import { BusinessType, GrowthStage } from "../../lib/quiz/types";
-import { getQuestionsForPath } from "../../lib/quiz/questions";
+import FloatingDots from "@/components/FloatingDots";
+import { creditGPSQuestions } from "../../lib/quiz/questions";
+import { CreditQuizAnswers, ContactInfo } from "../../lib/quiz/types";
+import { determineProfile, generateResult } from "../../lib/quiz/routing";
 import { submitQuizResult } from "../../lib/supabase";
 
-interface ResultProfile {
-  archetype: string;
-  archetypeEmoji: string;
-  archetypeDescription: string;
-  archetypeDetail: string;
-  challenge: string;
-  challengeEmoji: string;
-  challengeDescription: string;
-  pathForward: string[];
-  focusOn: {
-    title: string;
-    items: string[];
-  };
-  ignore: {
-    title: string;
-    items: string[];
-  };
-}
-
-const resultProfiles: Record<string, ResultProfile> = {
-  low: {
-    archetype: "The Foundation Seeker",
-    archetypeEmoji: "🌱",
-    archetypeDescription: "Visionary, High Energy, Needs Structure",
-    archetypeDetail: "You have big dreams and the drive to make them happen, but you need solid systems to channel your ADHD superpowers effectively.",
-    challenge: "Structure & Systems Gap",
-    challengeEmoji: "⚡",
-    challengeDescription: "Brilliant ideas, scattered execution. You know what to do but struggle with consistent systems and daily accountability.",
-    pathForward: [
-      "Start with ONE simple daily routine that works with your ADHD brain",
-      "Focus on energy-based scheduling instead of time-based",
-      "Build dopamine reward systems into every business task"
-    ],
-    focusOn: {
-      title: "What to focus on:",
-      items: ["Daily accountability systems", "ADHD-friendly productivity methods", "Community support and connection"]
-    },
-    ignore: {
-      title: "What to ignore:",
-      items: ["Complex business strategies", "Traditional time management", "Perfectionist thinking"]
-    }
-  },
-  mid: {
-    archetype: "The System Builder",
-    archetypeEmoji: "🔧",
-    archetypeDescription: "Growing Fast, Learning Quickly, Scaling Challenges",
-    archetypeDetail: "You've got momentum but need custom systems that work with your neurodivergent brain to scale sustainably.",
-    challenge: "Scaling Without Burnout",
-    challengeEmoji: "🚀",
-    challengeDescription: "You're growing but hitting capacity limits. Traditional business advice doesn't work for your ADHD brain.",
-    pathForward: [
-      "Create ADHD-friendly client delivery systems",
-      "Build energy-based team workflows", 
-      "Develop sustainable pricing that accounts for neurodivergent work patterns"
-    ],
-    focusOn: {
-      title: "What to focus on:",
-      items: ["Custom ADHD business systems", "Client retention frameworks", "Energy management protocols"]
-    },
-    ignore: {
-      title: "What to ignore:",
-      items: ["Generic business courses", "Hustle culture mentality", "One-size-fits-all solutions"]
-    }
-  },
-  high: {
-    archetype: "The Visionary Leader",
-    archetypeEmoji: "👑",
-    archetypeDescription: "Established, Innovative, Ready for Mastery",
-    archetypeDetail: "You're successful but ready to scale to the next level while honoring your neurodivergent leadership style.",
-    challenge: "Leadership & Legacy",
-    challengeEmoji: "🎯",
-    challengeDescription: "You want to build something bigger than yourself while staying true to your ADHD strengths and avoiding traditional burnout.",
-    pathForward: [
-      "Develop neurodivergent-friendly leadership systems",
-      "Create scalable team structures that complement ADHD",
-      "Build legacy systems that work without constant oversight"
-    ],
-    focusOn: {
-      title: "What to focus on:",
-      items: ["Advanced ADHD leadership training", "Scalable team systems", "Legacy business building"]
-    },
-    ignore: {
-      title: "What to ignore:",
-      items: ["Traditional leadership advice", "Micromanagement strategies", "Cookie-cutter scaling methods"]
-    }
-  }
-};
-
-// Generate poster image URL from video URL (skip for local videos)
-function getPosterFromVideo(videoUrl: string): string {
-  // For local videos, return empty string to avoid poster issues
-  if (videoUrl.startsWith('/videos/')) {
-    return '';
-  }
-  // Handle Cloudinary URLs
-  if (videoUrl.includes('cloudinary.com')) {
-    return videoUrl
-      .replace("/video/upload/", "/video/upload/so_0,f_jpg,q_auto/")
-      .replace(".mp4", ".jpg");
-  }
-  return videoUrl
-    .replace("/video/upload/q_auto,f_auto/", "/video/upload/so_0,f_jpg,q_auto/")
-    .replace(".mp4", ".jpg");
-}
-
-// AutoPlay Video component - hides video until playing to avoid play button
-function AutoPlayVideo({ src, className }: { src: string; className: string }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const posterUrl = getPosterFromVideo(src);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    // Force muted state (required for mobile autoplay)
-    video.muted = true;
-
-    // Show video when it starts playing
-    const handlePlaying = () => setIsPlaying(true);
-    video.addEventListener("playing", handlePlaying);
-
-    // Attempt to play
-    const playVideo = () => {
-      if (video.paused) {
-        video.play().catch(() => {});
-      }
-    };
-
-    // Try on various events
-    video.addEventListener("loadedmetadata", playVideo);
-    video.addEventListener("canplay", playVideo);
-    playVideo();
-
-    // Intersection Observer
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) playVideo();
-        });
-      },
-      { threshold: 0.1 }
-    );
-    observer.observe(video);
-
-    // User interaction fallback
-    const handleInteraction = () => playVideo();
-    document.addEventListener("touchstart", handleInteraction, { once: true, passive: true });
-    document.addEventListener("click", handleInteraction, { once: true });
-    document.addEventListener("scroll", handleInteraction, { once: true, passive: true });
-
-    return () => {
-      observer.disconnect();
-      video.removeEventListener("playing", handlePlaying);
-    };
-  }, []);
-
-  return (
-    <div className={className} style={{ backgroundImage: `url(${posterUrl})`, backgroundSize: "cover", backgroundPosition: "center", backgroundColor: "#1a1a1a" }}>
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        controls={false}
-        className={`w-full h-full object-cover transition-opacity duration-500 ${isPlaying ? "opacity-100" : "opacity-80"}`}
-      >
-        <source src={src} type="video/mp4" />
-      </video>
-    </div>
-  );
-}
+type Step = 'intro' | 'questions' | 'contact' | 'results';
 
 export default function Quiz() {
-  const router = useRouter();
-  const [step, setStep] = useState<'intro' | 'business-type' | 'growth-stage' | 'questions' | 'contact' | 'results'>('intro');
-  const [selectedBusinessType, setSelectedBusinessType] = useState<BusinessType | null>(null);
-  const [selectedGrowthStage, setSelectedGrowthStage] = useState<GrowthStage | null>(null);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<number[]>([]);
-  const [detailedAnswers, setDetailedAnswers] = useState<Array<{ questionId: string; questionText: string; selectedAnswer: string; points: number }>>([]);
-  const [totalScore, setTotalScore] = useState(0);
-  
-  // Contact form state
-  const [contactInfo, setContactInfo] = useState({
+  const [step, setStep] = useState<Step>('intro');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
+  const [textInput, setTextInput] = useState('');
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({
     full_name: '',
     email: '',
-    phone: ''
+    phone: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [result, setResult] = useState<ReturnType<typeof generateResult> | null>(null);
 
-  const startQuiz = () => {
-    setStep('business-type');
+  const currentQuestion = creditGPSQuestions[currentIndex];
+  const progress = ((currentIndex + 1) / creditGPSQuestions.length) * 100;
+
+  const handleSingleSelect = (optionId: string) => {
+    const newAnswers = { ...answers, [currentQuestion.id]: optionId };
+    setAnswers(newAnswers);
+    if (currentIndex < creditGPSQuestions.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      setStep('contact');
+    }
   };
 
-  const selectBusinessType = (businessType: BusinessType) => {
-    setSelectedBusinessType(businessType);
-    setStep('growth-stage');
+  const handleMultiSelect = (optionId: string) => {
+    const current = (answers[currentQuestion.id] as string[]) || [];
+    if (optionId === 'clean') {
+      setAnswers({ ...answers, [currentQuestion.id]: ['clean'] });
+      return;
+    }
+    let updated = current.filter((id) => id !== 'clean');
+    if (updated.includes(optionId)) {
+      updated = updated.filter((id) => id !== optionId);
+    } else {
+      updated = [...updated, optionId];
+    }
+    setAnswers({ ...answers, [currentQuestion.id]: updated });
   };
 
-  const calculateTier = () => {
-    // 20 questions × 4 points max = 80 total possible
-    if (totalScore <= 35) return 'low';     // 0-35: Foundation Seeker
-    if (totalScore <= 55) return 'mid';     // 36-55: System Builder 
-    return 'high';                          // 56-80: Visionary Leader
+  const handleMultiSelectNext = () => {
+    const selected = (answers[currentQuestion.id] as string[]) || [];
+    if (selected.length === 0) return;
+    if (currentIndex < creditGPSQuestions.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      setStep('contact');
+    }
+  };
+
+  const handleTextSubmit = () => {
+    if (!textInput.trim()) return;
+    const newAnswers = { ...answers, [currentQuestion.id]: textInput.trim() };
+    setAnswers(newAnswers);
+    setTextInput('');
+    if (currentIndex < creditGPSQuestions.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      setStep('contact');
+    }
+  };
+
+  const goBack = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    } else {
+      setStep('intro');
+    }
   };
 
   const resetQuiz = () => {
-    localStorage.removeItem('focusFoundersQuizScore');
-    localStorage.removeItem('focusFoundersQuizAnswers');
     setStep('intro');
-    setCurrentQuestionIndex(0);
-    setAnswers([]);
-    setDetailedAnswers([]);
-    setTotalScore(0);
-    setSelectedBusinessType(null);
-    setSelectedGrowthStage(null);
+    setCurrentIndex(0);
+    setAnswers({});
+    setTextInput('');
+    setContactInfo({ full_name: '', email: '', phone: '' });
+    setResult(null);
   };
 
   const submitContactForm = async () => {
@@ -237,46 +97,48 @@ export default function Quiz() {
     }
 
     setIsSubmitting(true);
-    
+
     try {
-      const tier = calculateTier();
-      const profile = resultProfiles[tier];
-      
-      // Get business type and growth stage names
-      const businessType = businessTypes.find(bt => bt.id === selectedBusinessType);
-      const growthStage = growthStages.find(gs => gs.id === selectedGrowthStage);
-      
-      const submission = {
-        full_name: contactInfo.full_name,
-        email: contactInfo.email,
-        phone: contactInfo.phone,
-        track: businessType?.name || selectedBusinessType || '',
-        archetype: tier,
-        archetype_name: profile.archetype,
-        bottleneck: profile.challengeDescription,
-        recommended_tier: `${profile.archetype} (${tier})`,
-        strike_zone: `${profile.archetypeDescription} - ${profile.challenge}`,
-        focus: profile.focusOn.items,
-        ignore_list: profile.ignore.items.join(', '),
-        sixty_day_path: profile.pathForward.join(' | '),
-        answers: {
-          businessType: selectedBusinessType,
-          growthStage: selectedGrowthStage,
-          questionAnswers: answers,
-          detailedAnswers: detailedAnswers,
-          totalScore: totalScore,
-          questions: getQuestionsForPath(selectedBusinessType!, selectedGrowthStage!)
-        },
-        user_agent: navigator.userAgent
+      const quizAnswers: CreditQuizAnswers = {
+        q1_goal: (answers.q1_goal as string) || '',
+        q2_fico: (answers.q2_fico as string) || '',
+        q3_negatives: (answers.q3_negatives as string[]) || [],
+        q4_utilization: (answers.q4_utilization as string) || '',
+        q5_two_cards: (answers.q5_two_cards as string) || '',
+        q6_in_business: (answers.q6_in_business as string) || '',
+        q7_revenue: (answers.q7_revenue as string) || '',
+        q8_occupation: (answers.q8_occupation as string) || '',
+        q9_challenge: (answers.q9_challenge as string) || '',
+        q10_fix_one_thing: (answers.q10_fix_one_thing as string) || '',
       };
-      
+
+      const profile = determineProfile(quizAnswers);
+      const quizResult = generateResult(profile, quizAnswers);
+      setResult(quizResult);
+
       try {
-        await submitQuizResult(submission);
-        console.log('Quiz submitted successfully to database');
+        await submitQuizResult({
+          full_name: contactInfo.full_name,
+          email: contactInfo.email,
+          phone: contactInfo.phone,
+          profile: quizResult.profile,
+          profile_name: quizResult.profileName,
+          fico_range: quizAnswers.q2_fico,
+          has_negatives: !quizAnswers.q3_negatives.includes('clean'),
+          negative_items: quizAnswers.q3_negatives,
+          utilization: quizAnswers.q4_utilization,
+          has_two_cards: quizAnswers.q5_two_cards === 'yes',
+          in_business: quizAnswers.q6_in_business === 'yes',
+          monthly_revenue: quizAnswers.q7_revenue,
+          occupation: quizAnswers.q8_occupation,
+          biggest_challenge: quizAnswers.q9_challenge,
+          answers: quizAnswers as unknown as Record<string, unknown>,
+          user_agent: navigator.userAgent,
+        });
       } catch (dbError) {
-        console.warn('Database not configured, quiz will work without saving:', dbError);
-        // Continue to results even if database submission fails
+        console.warn('Database submission failed, continuing to results:', dbError);
       }
+
       setStep('results');
     } catch (error) {
       console.error('Error processing quiz:', error);
@@ -286,51 +148,48 @@ export default function Quiz() {
     }
   };
 
-  const selectGrowthStage = (growthStage: GrowthStage) => {
-    setSelectedGrowthStage(growthStage);
-    
-    // Clear any existing quiz data and start fresh with the selected path
-    localStorage.removeItem('focusFoundersQuizScore');
-    localStorage.removeItem('focusFoundersQuizAnswers');
-    localStorage.setItem('focusFoundersQuizPath', JSON.stringify({
-      businessType: selectedBusinessType,
-      growthStage: growthStage
-    }));
-    
-    // Start the questions on this page
-    setCurrentQuestionIndex(0);
-    setAnswers([]);
-    setDetailedAnswers([]);
-    setStep('questions');
-  };
-
+  // =================== INTRO ===================
   if (step === 'intro') {
     return (
       <>
         <Navbar hideNavLinks={true} />
-        <div className="min-h-screen relative overflow-hidden pt-24">
-          <AutoPlayVideo src="https://res.cloudinary.com/dzlnqcmqn/video/upload/v1770000552/15_uefhjt.mp4" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="relative z-20 max-w-4xl mx-auto px-6 py-12 text-center text-white">
-            <div className="bg-white/20 backdrop-blur-md rounded-2xl p-8 border border-white/30 shadow-2xl">
-              <h1 className="text-4xl font-bold mb-6">ADHD Entrepreneur Assessment</h1>
-              <p className="text-xl mb-8">
-                Discover the perfect business support level for your unique ADHD journey
+        <FloatingDots />
+        <div className="min-h-screen mesh-gradient-hero pt-24 flex items-center justify-center">
+          <div className="relative z-10 max-w-3xl mx-auto px-6 py-12 text-center">
+            <div className="bg-white/80 backdrop-blur-md rounded-2xl p-10 border border-orange-vivid/15 shadow-xl">
+              <div className="text-orange-vivid text-sm font-semibold uppercase tracking-[0.3em] mb-4">
+                FREE ASSESSMENT
+              </div>
+              <h1 className="font-display text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-orange-vivid to-orange-deep bg-clip-text text-transparent">
+                Credit GPS Quiz
+              </h1>
+              <p className="text-xl text-charcoal/70 mb-8">
+                Discover your credit profile and get a personalized roadmap in 2 minutes.
               </p>
-              <div className="bg-yellow-400/20 rounded-xl p-6 mb-8">
-                <h2 className="text-2xl font-semibold mb-4">What You'll Get:</h2>
-                <ul className="space-y-2 text-lg">
-                  <li>✓ 20 questions tailored to your business type and stage</li>
-                  <li>✓ Personalized service recommendations</li>
-                  <li>✓ Insights into your unique neurodivergent business strengths</li>
-                  <li>✓ Action plan for your next steps toward sustainable success</li>
+              <div className="bg-orange-vivid/5 rounded-xl p-6 mb-8 border border-orange-vivid/10">
+                <h2 className="text-xl font-semibold mb-4 text-orange-deep">What You&apos;ll Get:</h2>
+                <ul className="space-y-3 text-lg text-left max-w-md mx-auto">
+                  <li className="flex items-start gap-3">
+                    <span className="text-orange-vivid mt-1">&#x2713;</span>
+                    <span className="text-charcoal/70">Your Credit Profile (Credit Builder or Funding Ready)</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-orange-vivid mt-1">&#x2713;</span>
+                    <span className="text-charcoal/70">Personalized summary of what&apos;s working &amp; what needs attention</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-orange-vivid mt-1">&#x2713;</span>
+                    <span className="text-charcoal/70">Clear next steps based on your exact situation</span>
+                  </li>
                 </ul>
               </div>
-              <button 
-                onClick={startQuiz}
-                className="bg-yellow-500 hover:bg-yellow-400 text-black px-12 py-4 rounded-full font-semibold text-xl transition-colors"
+              <button
+                onClick={() => { setStep('questions'); setCurrentIndex(0); }}
+                className="mesh-gradient-bg text-white px-12 py-4 rounded-full font-semibold text-xl transition-all hover:scale-105 hover:shadow-lg hover:shadow-orange-500/25"
               >
                 Start Assessment
               </button>
+              <p className="text-charcoal/40 text-sm mt-4">10 questions &bull; Takes about 2 minutes</p>
             </div>
           </div>
         </div>
@@ -338,198 +197,118 @@ export default function Quiz() {
     );
   }
 
-  if (step === 'business-type') {
-    return (
-      <>
-        <Navbar hideNavLinks={true} />
-        <div className="min-h-screen relative overflow-hidden pt-24">
-          <AutoPlayVideo src="https://res.cloudinary.com/dzlnqcmqn/video/upload/v1770000552/15_uefhjt.mp4" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="relative z-20 max-w-4xl mx-auto px-6 py-12 text-center text-white">
-              <div className="bg-white/90 backdrop-blur-md rounded-2xl p-8 text-black border border-white/40 shadow-2xl">
-                <div className="text-center mb-8">
-                  <h1 className="text-3xl font-bold mb-4">What type of business do you run?</h1>
-                  <p className="text-lg text-gray-600">
-                    Choose the option that best describes your business model
-                  </p>
-                </div>
-                
-                <div className="grid md:grid-cols-2 gap-6">
-                  {businessTypes.map((businessType) => (
-                    <button
-                      key={businessType.id}
-                      onClick={() => selectBusinessType(businessType.id)}
-                      className="text-left p-6 bg-white/80 hover:bg-white/90 rounded-xl transition-all duration-300 border border-gray-200 hover:border-blue-400"
-                    >
-                      <div className="text-4xl mb-4">{businessType.emoji}</div>
-                      <h3 className="text-xl font-semibold mb-2 text-black">{businessType.name}</h3>
-                      <p className="text-gray-700 mb-4">{businessType.description}</p>
-                      <div className="text-sm text-blue-600 font-medium">
-                        Examples: {businessType.examples.join(', ')}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  if (step === 'growth-stage') {
-    const selectedType = businessTypes.find(bt => bt.id === selectedBusinessType);
-    
-    return (
-      <>
-        <Navbar hideNavLinks={true} />
-        <div className="min-h-screen relative overflow-hidden pt-24">
-          <AutoPlayVideo src="https://res.cloudinary.com/dzlnqcmqn/video/upload/v1770000552/15_uefhjt.mp4" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="relative z-20 max-w-4xl mx-auto px-6 py-12 text-center text-white">
-              <div className="bg-white/90 backdrop-blur-md rounded-2xl p-8 text-black border border-white/40 shadow-2xl">
-                <div className="text-center mb-8">
-                  <div className="flex items-center justify-center mb-4">
-                    <span className="text-3xl mr-2">{selectedType?.emoji}</span>
-                    <span className="text-2xl font-semibold">{selectedType?.name}</span>
-                  </div>
-                  <h1 className="text-3xl font-bold mb-4">What stage is your business in?</h1>
-                  <p className="text-lg text-gray-600">
-                    Choose the stage that best describes where you are now
-                  </p>
-                </div>
-                
-                <div className="space-y-6">
-                  {growthStages.map((stage) => (
-                    <button
-                      key={stage.id}
-                      onClick={() => selectGrowthStage(stage.id)}
-                      className="w-full text-left p-6 bg-white/80 hover:bg-white/90 rounded-xl transition-all duration-300 border border-gray-200 hover:border-blue-400"
-                    >
-                      <div className="flex items-start">
-                        <div className="text-3xl mr-4">{stage.emoji}</div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-xl font-semibold text-black">{stage.name}</h3>
-                            <span className="text-blue-600 font-medium">{stage.revenue}</span>
-                          </div>
-                          <p className="text-gray-700">{stage.description}</p>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-                
-                <div className="mt-8 text-center">
-                  <button
-                    onClick={() => setStep('business-type')}
-                    className="text-blue-600 hover:text-blue-500 font-medium"
-                  >
-                    ← Back to business type
-                  </button>
-                </div>
-              </div>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  // Questions step - handle all questions on this page
+  // =================== QUESTIONS ===================
   if (step === 'questions') {
-    const questions = getQuestionsForPath(selectedBusinessType!, selectedGrowthStage!);
-    const currentQuestion = questions[currentQuestionIndex];
-    const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-
-    const handleAnswer = (points: number, selectedAnswerText: string) => {
-      const newAnswers = [...answers];
-      newAnswers[currentQuestionIndex] = points;
-      setAnswers(newAnswers);
-      
-      // Store detailed answer data
-      const newDetailedAnswers = [...detailedAnswers];
-      newDetailedAnswers[currentQuestionIndex] = {
-        questionId: currentQuestion.id,
-        questionText: currentQuestion.question,
-        selectedAnswer: selectedAnswerText,
-        points: points
-      };
-      setDetailedAnswers(newDetailedAnswers);
-      
-      // Save to localStorage
-      localStorage.setItem('focusFoundersQuizAnswers', JSON.stringify(newAnswers));
-      
-      // Move to next question or results
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-      } else {
-        // Calculate final results and show contact form
-        const calculatedScore = newAnswers.reduce((sum, score) => sum + score, 0);
-        setTotalScore(calculatedScore);
-        localStorage.setItem('focusFoundersQuizScore', calculatedScore.toString());
-        setStep('contact');
-      }
-    };
-
-    const goBack = () => {
-      if (currentQuestionIndex > 0) {
-        setCurrentQuestionIndex(currentQuestionIndex - 1);
-      } else {
-        setStep('growth-stage');
-      }
-    };
-
     return (
       <>
         <Navbar hideNavLinks={true} />
-        <div className="min-h-screen relative overflow-hidden pt-24">
-          <AutoPlayVideo src="https://res.cloudinary.com/dzlnqcmqn/video/upload/v1770000552/15_uefhjt.mp4" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="relative z-20 max-w-4xl mx-auto px-6 py-12 text-center text-white">
-            <div className="bg-white/20 backdrop-blur-md rounded-2xl p-8 border border-white/30 shadow-2xl">
+        <FloatingDots />
+        <div className="min-h-screen mesh-gradient-hero pt-24 flex items-center justify-center">
+          <div className="relative z-10 max-w-3xl w-full mx-auto px-6 py-12">
+            <div className="bg-white/80 backdrop-blur-md rounded-2xl p-8 border border-orange-vivid/15 shadow-xl">
+              {/* Progress */}
               <div className="mb-8">
-                <div className="flex justify-between items-center mb-4">
-                  <h1 className="text-3xl font-bold text-white">ADHD Entrepreneur Assessment</h1>
-                  <span className="text-white font-semibold">
-                    {currentQuestionIndex + 1} of {questions.length}
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-sm text-charcoal/50 font-medium">Credit GPS Quiz</span>
+                  <span className="text-sm text-orange-vivid font-semibold">
+                    {currentIndex + 1} of {creditGPSQuestions.length}
                   </span>
                 </div>
-                
-                <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
-                  <div 
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-300"
+                <div className="w-full bg-charcoal/5 rounded-full h-2">
+                  <div
+                    className="mesh-gradient-bg h-2 rounded-full transition-all duration-500"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
-
-                <button
-                  onClick={goBack}
-                  className="mb-4 text-white hover:text-white/80 flex items-center font-medium"
-                >
-                  ← Previous
-                </button>
               </div>
-              
-              <div className="mb-8">
-                <h2 className="text-2xl font-semibold mb-8 text-white">
-                  {currentQuestion.question}
-                </h2>
-                
-                <div className="space-y-4">
-                  {currentQuestion.options.map((option, index) => (
+
+              {/* Back button */}
+              <button
+                onClick={goBack}
+                className="mb-6 text-charcoal/40 hover:text-charcoal/70 flex items-center text-sm font-medium transition-colors"
+              >
+                &larr; Back
+              </button>
+
+              {/* Question */}
+              <h2 className="text-2xl font-bold mb-8 text-charcoal">
+                {currentQuestion.question}
+              </h2>
+
+              {/* Single select */}
+              {currentQuestion.type === 'single' && currentQuestion.options && (
+                <div className="space-y-3">
+                  {currentQuestion.options.map((option) => (
                     <button
-                      key={index}
-                      onClick={() => handleAnswer(option.points, option.text)}
-                      className="w-full text-left p-6 bg-white/80 hover:bg-white/90 rounded-xl transition-all duration-300 border border-gray-200 hover:border-blue-400"
+                      key={option.id}
+                      onClick={() => handleSingleSelect(option.id)}
+                      className={`w-full text-left p-5 rounded-xl transition-all duration-200 border ${
+                        answers[currentQuestion.id] === option.id
+                          ? 'bg-orange-vivid/10 border-orange-vivid/50 text-charcoal'
+                          : 'bg-white border-charcoal/10 text-charcoal/70 hover:bg-orange-50 hover:border-orange-vivid/20'
+                      }`}
                     >
-                      <span className="text-lg text-black">{option.text}</span>
+                      <span className="text-lg">{option.text}</span>
                     </button>
                   ))}
                 </div>
-              </div>
+              )}
 
-              <div className="text-center text-white/80">
-                <p className="text-sm">
-                  This assessment helps us recommend the perfect ADHD-friendly business support for your current stage.
-                </p>
-              </div>
+              {/* Multi-select */}
+              {currentQuestion.type === 'multi-select' && currentQuestion.options && (
+                <>
+                  <div className="space-y-3">
+                    {currentQuestion.options.map((option) => {
+                      const selected = ((answers[currentQuestion.id] as string[]) || []).includes(option.id);
+                      return (
+                        <button
+                          key={option.id}
+                          onClick={() => handleMultiSelect(option.id)}
+                          className={`w-full text-left p-5 rounded-xl transition-all duration-200 border flex items-center gap-3 ${
+                            selected
+                              ? 'bg-orange-vivid/10 border-orange-vivid/50 text-charcoal'
+                              : 'bg-white border-charcoal/10 text-charcoal/70 hover:bg-orange-50 hover:border-orange-vivid/20'
+                          }`}
+                        >
+                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
+                            selected ? 'bg-orange-vivid border-orange-vivid' : 'border-charcoal/20'
+                          }`}>
+                            {selected && <span className="text-white text-xs">&#x2713;</span>}
+                          </div>
+                          <span className="text-lg">{option.text}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <button
+                    onClick={handleMultiSelectNext}
+                    disabled={!answers[currentQuestion.id] || (answers[currentQuestion.id] as string[]).length === 0}
+                    className="mt-6 w-full mesh-gradient-bg text-white py-4 rounded-full font-semibold text-lg transition-all hover:scale-[1.02] disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  >
+                    Continue
+                  </button>
+                </>
+              )}
+
+              {/* Text input */}
+              {currentQuestion.type === 'text' && (
+                <div className="space-y-4">
+                  <textarea
+                    value={textInput}
+                    onChange={(e) => setTextInput(e.target.value)}
+                    placeholder="Type your answer here..."
+                    rows={3}
+                    className="w-full px-5 py-4 bg-white border border-charcoal/10 rounded-xl text-charcoal placeholder-charcoal/30 focus:outline-none focus:border-orange-vivid/50 focus:ring-2 focus:ring-orange-vivid/10 transition-all text-lg resize-none"
+                  />
+                  <button
+                    onClick={handleTextSubmit}
+                    disabled={!textInput.trim()}
+                    className="w-full mesh-gradient-bg text-white py-4 rounded-full font-semibold text-lg transition-all hover:scale-[1.02] disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  >
+                    Continue
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -537,106 +316,89 @@ export default function Quiz() {
     );
   }
 
-  // Contact form step
+  // =================== CONTACT ===================
   if (step === 'contact') {
     return (
       <>
         <Navbar hideNavLinks={true} />
-        <div className="min-h-screen relative overflow-hidden pt-24">
-          <AutoPlayVideo src="https://res.cloudinary.com/dzlnqcmqn/video/upload/v1770000552/15_uefhjt.mp4" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="relative z-20 max-w-4xl mx-auto px-6 py-12 text-center text-white">
-            <div className="bg-white/20 backdrop-blur-md rounded-2xl p-8 border border-white/30 shadow-2xl">
-              
-              {/* Header */}
+        <FloatingDots />
+        <div className="min-h-screen mesh-gradient-hero pt-24 flex items-center justify-center">
+          <div className="relative z-10 max-w-3xl mx-auto px-6 py-12">
+            <div className="bg-white/80 backdrop-blur-md rounded-2xl p-8 border border-orange-vivid/15 shadow-xl">
               <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold mb-4 text-white">🎉 Almost Done!</h1>
-                <p className="text-xl text-white/80 mb-4">
-                  Enter your contact information to get your personalized ADHD entrepreneur results.
-                </p>
-                <div className="text-lg text-white/70">
-                  Your results will be delivered instantly - no waiting!
-                </div>
-              </div>
-
-              {/* Contact Form */}
-              <div className="bg-white/10 rounded-xl p-6 mb-8">
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-white font-semibold mb-2 text-left">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={contactInfo.full_name}
-                      onChange={(e) => setContactInfo({...contactInfo, full_name: e.target.value})}
-                      placeholder="Enter your full name"
-                      className="w-full px-4 py-3 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white font-semibold mb-2 text-left">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      value={contactInfo.email}
-                      onChange={(e) => setContactInfo({...contactInfo, email: e.target.value})}
-                      placeholder="Enter your email address"
-                      className="w-full px-4 py-3 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white font-semibold mb-2 text-left">
-                      Phone Number *
-                    </label>
-                    <input
-                      type="tel"
-                      value={contactInfo.phone}
-                      onChange={(e) => setContactInfo({...contactInfo, phone: e.target.value})}
-                      placeholder="Enter your phone number"
-                      className="w-full px-4 py-3 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Privacy Note */}
-              <div className="bg-yellow-500/20 rounded-lg p-4 mb-8">
-                <p className="text-sm text-white/80">
-                  🔒 Your information is secure and will only be used to deliver your personalized results and occasional ADHD entrepreneur tips. We never spam or share your data.
+                <h1 className="font-display text-3xl font-bold mb-4 text-charcoal">Almost Done!</h1>
+                <p className="text-lg text-charcoal/60">
+                  Enter your info to get your personalized Credit GPS results.
                 </p>
               </div>
 
-              {/* Submit Button */}
+              <div className="space-y-5 mb-8">
+                <div>
+                  <label className="block text-charcoal/70 font-medium mb-2 text-sm">Full Name *</label>
+                  <input
+                    type="text"
+                    value={contactInfo.full_name}
+                    onChange={(e) => setContactInfo({ ...contactInfo, full_name: e.target.value })}
+                    placeholder="Enter your full name"
+                    className="w-full px-5 py-4 bg-white border border-charcoal/10 rounded-xl text-charcoal placeholder-charcoal/30 focus:outline-none focus:border-orange-vivid/50 focus:ring-2 focus:ring-orange-vivid/10 transition-all"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-charcoal/70 font-medium mb-2 text-sm">Email Address *</label>
+                  <input
+                    type="email"
+                    value={contactInfo.email}
+                    onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
+                    placeholder="Enter your email address"
+                    className="w-full px-5 py-4 bg-white border border-charcoal/10 rounded-xl text-charcoal placeholder-charcoal/30 focus:outline-none focus:border-orange-vivid/50 focus:ring-2 focus:ring-orange-vivid/10 transition-all"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-charcoal/70 font-medium mb-2 text-sm">Phone Number *</label>
+                  <input
+                    type="tel"
+                    value={contactInfo.phone}
+                    onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
+                    placeholder="Enter your phone number"
+                    className="w-full px-5 py-4 bg-white border border-charcoal/10 rounded-xl text-charcoal placeholder-charcoal/30 focus:outline-none focus:border-orange-vivid/50 focus:ring-2 focus:ring-orange-vivid/10 transition-all"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="bg-orange-vivid/5 rounded-lg p-4 mb-6 border border-orange-vivid/10">
+                <p className="text-sm text-charcoal/50">
+                  Your information is secure and will only be used to deliver your personalized results. We never spam or share your data.
+                </p>
+              </div>
+
               <div className="space-y-4">
                 <button
                   onClick={submitContactForm}
                   disabled={isSubmitting}
                   className={`w-full py-4 px-8 rounded-full font-bold text-lg transition-all ${
-                    isSubmitting 
-                      ? 'bg-gray-400 cursor-not-allowed' 
-                      : 'bg-yellow-500 hover:bg-yellow-400 text-black'
+                    isSubmitting
+                      ? 'bg-charcoal/20 cursor-not-allowed text-charcoal/40'
+                      : 'mesh-gradient-bg text-white hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/25'
                   }`}
                 >
                   {isSubmitting ? (
                     <span className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black mr-3"></div>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-vivid mr-3"></div>
                       Generating Your Results...
                     </span>
                   ) : (
-                    'Get My ADHD Entrepreneur Results'
+                    'Get My Credit GPS Results'
                   )}
                 </button>
-                
                 <button
                   onClick={() => setStep('questions')}
-                  className="text-white/60 hover:text-white/80 text-sm"
+                  className="w-full text-charcoal/40 hover:text-charcoal/60 text-sm transition-colors"
                   disabled={isSubmitting}
                 >
-                  ← Back to Questions
+                  &larr; Back to Questions
                 </button>
               </div>
             </div>
@@ -646,114 +408,95 @@ export default function Quiz() {
     );
   }
 
-  // Results step - show results on same page
-  if (step === 'results') {
-    const tier = calculateTier();
-    const profile = resultProfiles[tier];
-
+  // =================== RESULTS ===================
+  if (step === 'results' && result) {
     return (
       <>
         <Navbar hideNavLinks={true} />
-        <div className="min-h-screen relative overflow-hidden pt-24">
-          <AutoPlayVideo src="https://res.cloudinary.com/dzlnqcmqn/video/upload/v1770000552/15_uefhjt.mp4" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="relative z-20 max-w-5xl mx-auto px-6 py-12 text-center">
-            <div className="bg-white/20 backdrop-blur-md rounded-2xl p-8 border border-white/40 shadow-2xl text-white">
-              
-              {/* Header */}
-              <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold mb-4 text-white">🤖 Your ADHD Strike Zone Results</h1>
-                <div className="text-2xl font-bold text-white mb-2">
-                  You're {profile.archetype} with {profile.challenge}
-                </div>
+        <FloatingDots />
+        <div className="min-h-screen mesh-gradient-hero pt-24 pb-16">
+          <div className="relative z-10 max-w-3xl mx-auto px-6 py-12">
+            <div className="bg-white/80 backdrop-blur-md rounded-2xl p-8 border border-orange-vivid/15 shadow-xl">
+
+              {/* Profile Header */}
+              <div className="text-center mb-10">
+                <div className="text-6xl mb-4">{result.profileEmoji}</div>
+                <div className="text-sm uppercase tracking-[0.3em] text-orange-vivid mb-2">Your Credit Profile</div>
+                <h1 className="font-display text-4xl font-bold mb-3 bg-gradient-to-r from-orange-vivid to-orange-deep bg-clip-text text-transparent">
+                  {result.profileName}
+                </h1>
+                <p className="text-lg text-charcoal/60">{result.primaryChallenge}</p>
               </div>
 
-              {/* Visual Archetype Card */}
-              <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-8 text-white mb-8">
-                <div className="text-center">
-                  <div className="text-6xl mb-4">{profile.archetypeEmoji}</div>
-                  <h2 className="text-3xl font-bold mb-3">{profile.archetype}</h2>
-                  <p className="text-xl opacity-90 mb-4">{profile.archetypeDescription}</p>
-                  <p className="text-lg opacity-80">{profile.archetypeDetail}</p>
-                </div>
+              {/* What's Working */}
+              <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-6">
+                <h3 className="text-lg font-bold text-green-700 mb-4">What&apos;s Working</h3>
+                <ul className="space-y-3">
+                  {result.summary.whatsWorking.map((item, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="text-green-600 mt-0.5">&#x2713;</span>
+                      <span className="text-charcoal/70">{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
-              {/* Challenge Section */}
-              <div className="bg-red-50 rounded-xl p-6 mb-8">
-                <div className="text-center">
-                  <div className="text-4xl mb-3">{profile.challengeEmoji}</div>
-                  <h3 className="text-2xl font-bold text-red-700 mb-3">{profile.challenge}</h3>
-                  <p className="text-gray-700">{profile.challengeDescription}</p>
-                </div>
+              {/* Needs Attention */}
+              <div className="bg-orange-50 border border-orange-200 rounded-xl p-6 mb-6">
+                <h3 className="text-lg font-bold text-orange-vivid mb-4">Needs Attention</h3>
+                <ul className="space-y-3">
+                  {result.summary.needsAttention.map((item, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="text-orange-vivid mt-0.5">&#x25cf;</span>
+                      <span className="text-charcoal/70">{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
-              {/* Path Forward */}
-              <div className="bg-blue-50 rounded-xl p-6 mb-8">
-                <h3 className="text-2xl font-bold text-center mb-6 text-blue-800">Your Path Forward:</h3>
+              {/* Next Steps */}
+              <div className="bg-soft-white border border-charcoal/5 rounded-xl p-6 mb-8">
+                <h3 className="text-lg font-bold text-charcoal mb-4">Your Next Steps</h3>
                 <div className="space-y-4">
-                  {profile.pathForward.map((step, index) => (
-                    <div key={index} className="flex items-start text-left">
-                      <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-4 mt-0.5 flex-shrink-0">
-                        {index + 1}
+                  {result.nextSteps.map((step, i) => (
+                    <div key={i} className="flex items-start gap-4">
+                      <span className="mesh-gradient-bg text-white rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold flex-shrink-0">
+                        {i + 1}
                       </span>
-                      <span className="text-gray-800">{step}</span>
+                      <span className="text-charcoal/70">{step}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Focus Areas */}
-              <div className="grid md:grid-cols-2 gap-6 mb-8">
-                <div className="bg-green-50 rounded-xl p-6">
-                  <h4 className="font-bold text-green-800 text-lg mb-3">{profile.focusOn.title}</h4>
-                  <ul className="space-y-2">
-                    {profile.focusOn.items.map((item, index) => (
-                      <li key={index} className="flex items-center text-gray-700">
-                        <span className="text-green-600 mr-2">✓</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="bg-red-50 rounded-xl p-6">
-                  <h4 className="font-bold text-red-800 text-lg mb-3">{profile.ignore.title}</h4>
-                  <ul className="space-y-2">
-                    {profile.ignore.items.map((item, index) => (
-                      <li key={index} className="flex items-center text-gray-700">
-                        <span className="text-red-600 mr-2">✗</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              {/* Call to Action */}
+              {/* CTAs */}
               <div className="text-center space-y-4">
-                <div className="text-lg text-white mb-6">
-                  Ready to transform your ADHD entrepreneurial journey?
-                </div>
-                <div className="space-x-4">
-                  <button 
-                    onClick={resetQuiz}
-                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-full transition-colors"
-                  >
-                    Retake Assessment
-                  </button>
-                  {(selectedGrowthStage !== 'startup') ? (
-                    <a
-                      href="https://calendly.com/rexloyer/focus-founders-qualification?back=1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-orange-500 hover:bg-orange-400 text-black px-8 py-3 rounded-full font-semibold transition-colors inline-block"
-                    >
-                      Book Strategy Call
-                    </a>
-                  ) : null}
+                <a
+                  href={result.cta.primary.url}
+                  className="block w-full mesh-gradient-bg text-white py-4 rounded-full font-bold text-lg transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/25"
+                >
+                  {result.cta.primary.label}
+                </a>
+                {result.cta.secondary && (
                   <a
-                    href="https://www.skool.com/focus-founders-free/about"
-                    className="bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-3 rounded-full font-semibold transition-colors inline-block"
+                    href={result.cta.secondary.url}
+                    className="block w-full bg-white border-2 border-orange-vivid/30 text-orange-vivid py-4 rounded-full font-semibold text-lg transition-all hover:bg-orange-50"
                   >
-                    Join Focus Founders
+                    {result.cta.secondary.label}
+                  </a>
+                )}
+                <div className="flex gap-4 pt-4">
+                  <button
+                    onClick={resetQuiz}
+                    className="flex-1 text-charcoal/40 hover:text-charcoal/60 text-sm transition-colors py-2"
+                  >
+                    Retake Quiz
+                  </button>
+                  <a
+                    href="https://www.skool.com/tch"
+                    className="flex-1 text-orange-vivid/60 hover:text-orange-vivid text-sm transition-colors py-2"
+                  >
+                    Join The Credit Hub
                   </a>
                 </div>
               </div>

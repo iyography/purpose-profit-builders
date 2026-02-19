@@ -10,50 +10,50 @@ const reviews = [
   {
     id: 1,
     name: "Sarah M.",
-    business: "Freelance Designer",
-    review: "Focus Founders changed everything for me. Finally found people who understand why I hyperfocus for 12 hours straight and then can't answer emails for a week. The body doubling sessions are a lifesaver!",
+    business: "Small Business Owner",
+    review: "The Credit Hub changed everything for me. I had 7 collections dragging my score down to 480. Within 3 months, 5 were removed and my score jumped to 680. The dispute letter templates and step-by-step guidance made it so easy!",
     rating: 5,
-    highlight: "Body doubling sessions are a lifesaver!"
+    highlight: "Score jumped from 480 to 680 in 3 months!"
   },
   {
     id: 2,
     name: "Marcus T.",
-    business: "SaaS Founder",
-    review: "I was burning out trying to force my ADHD brain into neurotypical systems. Focus Founders taught me to work WITH my brain, not against it. Revenue up 300% since joining.",
+    business: "Real Estate Investor",
+    review: "I was stuck in a cycle of high-interest loans because of my credit score. The Credit Hub taught me exactly how to rebuild strategically. Now I'm approved for prime rates and just closed on my second investment property.",
     rating: 5,
-    highlight: "Revenue up 300% since joining"
+    highlight: "Approved for prime rates on investment properties"
   },
   {
     id: 3,
     name: "Jessica L.",
     business: "E-commerce Store",
-    review: "The rejection sensitivity was killing my business growth. Focus Founders gave me tools and a community that actually gets it. Now I pitch confidently and close deals I would have avoided before.",
+    review: "Bad credit was killing my business growth - I couldn't get funding anywhere. The Credit Hub gave me a clear credit repair roadmap and business funding strategies. Got approved for $35K in business credit within 6 months.",
     rating: 5,
-    highlight: "Now I pitch confidently and close deals"
+    highlight: "Approved for $35K in business credit"
   },
   {
     id: 4,
     name: "David K.",
     business: "Marketing Agency",
-    review: "Time blindness made me the worst project manager ever. The ADHD-friendly systems from Focus Founders helped me build processes that actually work for my brain. Clients love the consistency now.",
+    review: "Late payments and charge-offs had my credit wrecked for years. The dispute strategies from The Credit Hub actually worked - got 4 late payments removed and my score went from 540 to 710. Now I have the credit to scale my agency.",
     rating: 5,
-    highlight: "Built processes that work for my brain"
+    highlight: "Score went from 540 to 710"
   },
   {
     id: 5,
     name: "Rachel P.",
     business: "Online Coach",
-    review: "I used to think my ADHD was a business liability. Focus Founders showed me it's actually my superpower. The hyperfocus sessions help me create months of content in single sittings.",
+    review: "I used to think my credit was beyond repair. The Credit Hub showed me that anyone can rebuild. The credit stacking strategies helped me build a $50K funding portfolio for my business in under a year.",
     rating: 5,
-    highlight: "ADHD is actually my superpower"
+    highlight: "Built a $50K funding portfolio"
   },
   {
     id: 6,
     name: "Mike R.",
-    business: "Software Developer",
-    review: "The emotional dysregulation was sabotaging client relationships. Focus Founders taught me energy management and communication strategies. Now I'm the go-to developer for long-term projects.",
+    business: "Contractor",
+    review: "Collections and medical debt had me at a 490 score. The Credit Hub walked me through every dispute, every goodwill letter, every strategy. 8 months later I'm at 730 and just got approved for a business loan to buy new equipment.",
     rating: 5,
-    highlight: "Now I'm the go-to developer"
+    highlight: "From 490 to 730 in 8 months"
   }
 ];
 
@@ -75,7 +75,7 @@ export default function WinsOrange() {
               href="/"
               className="font-bold text-2xl md:text-3xl text-white hover:opacity-80 transition-all duration-300"
             >
-              Focus Founders
+              The Credit Hub
             </Link>
 
             <div className="hidden md:flex items-center gap-8">
@@ -98,7 +98,7 @@ export default function WinsOrange() {
                 Take Quiz
               </Link>
               <Link
-                href="https://www.skool.com/focus-founders-free/about"
+                href="https://www.skool.com/tch"
                 className="text-xs tracking-widest uppercase px-6 py-2 bg-yellow-500 text-black hover:bg-yellow-400 transition-all duration-300 rounded-sm"
               >
                 Join Free
@@ -128,11 +128,11 @@ export default function WinsOrange() {
               🎉 Member Wins
             </h1>
             <p className="text-xl text-white/80 max-w-3xl mx-auto mb-8">
-              Real stories from ADHD entrepreneurs who stopped fighting their brains and started building businesses that work WITH their neurodivergent superpowers.
+              Real stories from members who took control of their credit, repaired their scores, and unlocked the funding they needed to transform their financial futures.
             </p>
             <div className="bg-orange-500/20 rounded-xl p-6 max-w-2xl mx-auto">
               <p className="text-lg font-semibold text-white">
-                These are actual reviews from Focus Founders members who transformed their businesses by embracing their ADHD.
+                These are actual reviews from The Credit Hub members who transformed their credit scores and unlocked real funding for their futures.
               </p>
             </div>
           </motion.div>
@@ -186,20 +186,20 @@ export default function WinsOrange() {
               Ready to Write Your Own Success Story?
             </h2>
             <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-              Join hundreds of ADHD entrepreneurs who've stopped masking and started thriving.
+              Join hundreds of members who've taken control of their credit and started building real wealth.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
               <Link 
-                href="https://www.skool.com/focus-founders-free/about"
+                href="https://www.skool.com/tch"
                 className="inline-block font-sans font-semibold bg-yellow-500 hover:bg-yellow-400 text-black px-12 py-4 rounded-full transition-colors text-lg"
               >
-                Join Focus Founders
+                Join The Credit Hub
               </Link>
-              <Link 
+              <Link
                 href="/quiz"
                 className="inline-block font-sans font-semibold bg-white/20 hover:bg-white/30 text-white border-2 border-white/30 px-12 py-4 rounded-full transition-colors text-lg"
               >
-                Take ADHD Business Quiz
+                Take Credit GPS Quiz
               </Link>
             </div>
           </motion.div>
