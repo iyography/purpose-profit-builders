@@ -9,8 +9,7 @@ export interface AuthUser {
 
 const USERS: Record<string, { password: string; name: string; role: UserRole; slug: string }> = {
   'davidiya3@gmail.com': { password: 'PPBuilders2026!', name: 'David', role: 'admin', slug: 'admin' },
-  'david@example.com': { password: 'David2026!', name: 'David', role: 'member', slug: 'david' },
-  'cathy@example.com': { password: 'Cathy2026!', name: 'Cathy', role: 'member', slug: 'cathy' },
+  'theodore@ppbuilders.com': { password: 'Theodore2026!', name: 'Theodore', role: 'member', slug: 'theodore' },
 };
 
 export function authenticate(email: string, password: string): AuthUser | null {
@@ -20,7 +19,7 @@ export function authenticate(email: string, password: string): AuthUser | null {
   return { email: normalizedEmail, name: user.name, role: user.role, slug: user.slug };
 }
 
-export function getUserByEmail(email: string): Omit<AuthUser, 'email'> & { email: string } | null {
+export function getUserByEmail(email: string): AuthUser | null {
   const normalizedEmail = email.toLowerCase();
   const user = USERS[normalizedEmail];
   if (!user) return null;

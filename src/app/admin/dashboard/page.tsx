@@ -171,8 +171,7 @@ export default function AdminDashboard() {
 
   // Members list
   const members = [
-    { name: 'David', slug: 'david', email: 'david@example.com' },
-    { name: 'Cathy', slug: 'cathy', email: 'cathy@example.com' },
+    { name: 'Theodore', slug: 'theodore', email: 'theodore@ppbuilders.com' },
   ];
 
   if (!currentUser) {
