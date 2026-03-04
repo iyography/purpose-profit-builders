@@ -22,8 +22,8 @@ export default function Navbar({ hideNavLinks = false }: { hideNavLinks?: boolea
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         <div className="flex items-center justify-between">
           {/* Logo — text-only for compactness */}
-          <a href="/" className="shrink-0 font-display font-bold text-lg sm:text-xl text-gold-vivid hover:opacity-80 transition-opacity">
-            PPB
+          <a href="/" className="shrink-0 hover:opacity-80 transition-opacity">
+            <img src="/pp-logo.svg" alt="Purpose & Profit Builders" className="h-9 w-9 sm:h-10 sm:w-10" />
           </a>
 
           {/* Desktop Nav Links */}

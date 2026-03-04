@@ -20,9 +20,9 @@ export const metadata: Metadata = {
   title: "Purpose & Profit Builders | Faith-Driven Entrepreneur Community",
   description: "Build consistent income from $0-$10K/mo using Kingdom economics and simple AI systems. No hustle. No burnout. Take the free 2-minute Clarity Quiz.",
   icons: {
-    icon: "/ppb-logo.svg",
-    shortcut: "/ppb-logo.svg",
-    apple: "/ppb-logo.svg",
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
   },
   openGraph: {
     title: "Purpose & Profit Builders | Faith-Driven Entrepreneur Community",

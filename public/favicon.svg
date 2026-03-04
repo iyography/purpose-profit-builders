@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFD700"/>
+      <stop offset="30%" stop-color="#FFFFFF"/>
+      <stop offset="60%" stop-color="#DAA520"/>
+      <stop offset="100%" stop-color="#FFD700"/>
+    </linearGradient>
+    <linearGradient id="bg2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="50%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="6" fill="url(#bg1)"/>
+  <rect width="32" height="32" rx="6" fill="url(#bg2)" opacity="0.4"/>
+  <ellipse cx="10" cy="10" rx="8" ry="7" fill="#FFFFFF" opacity="0.3"/>
+  <text x="16" y="23" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="16" fill="#1a1a1a" letter-spacing="-1">PP</text>
+</svg>
