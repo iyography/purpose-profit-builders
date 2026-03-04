@@ -13,7 +13,7 @@ interface Particle {
   phase: number;
 }
 
-const COLORS = ['#FF6B00', '#FF4500', '#FB923C', '#F59E0B', '#FF6347'];
+const COLORS = ['#D4AF37', '#FFD700', '#B8860B', '#DAA520', '#FFB800'];
 const PARTICLE_COUNT = 100;
 const CONNECTION_DISTANCE = 120;
 const CONNECTION_OPACITY = 0.08;
@@ -69,7 +69,7 @@ export default function FloatingDots() {
           if (dist < CONNECTION_DISTANCE) {
             const opacity = CONNECTION_OPACITY * (1 - dist / CONNECTION_DISTANCE);
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 107, 0, ${opacity})`;
+            ctx.strokeStyle = `rgba(212, 175, 55, ${opacity})`;
             ctx.lineWidth = 0.5;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);

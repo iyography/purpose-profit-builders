@@ -17,31 +17,31 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "The Credit Hub | Credit Repair & Funding Community",
-  description: "Fix your credit. Secure $50K-$250K in funding. Build a funding business using the same system behind $30M+ secured. Take the free Credit GPS Quiz.",
+  title: "Purpose & Profit Builders | Faith-Driven Entrepreneur Community",
+  description: "Build consistent income from $0-$10K/mo using Kingdom economics and simple AI systems. No hustle. No burnout. Take the free 2-minute Clarity Quiz.",
   icons: {
-    icon: "/credit-hub-logo.svg",
-    shortcut: "/credit-hub-logo.svg",
-    apple: "/credit-hub-logo.svg",
+    icon: "/ppb-logo.svg",
+    shortcut: "/ppb-logo.svg",
+    apple: "/ppb-logo.svg",
   },
   openGraph: {
-    title: "The Credit Hub | Credit Repair & Funding Community",
-    description: "Fix your credit. Secure $50K-$250K in funding. Build a funding business using the same system behind $30M+ secured.",
+    title: "Purpose & Profit Builders | Faith-Driven Entrepreneur Community",
+    description: "Build consistent income from $0-$10K/mo using Kingdom economics and simple AI systems. No hustle. No burnout. Purpose → Peace → Profit.",
     images: [
       {
-        url: "/credit-hub-logo.svg",
+        url: "/ppb-logo.svg",
         width: 1200,
         height: 630,
-        alt: "The Credit Hub - Credit Repair & Funding Community",
+        alt: "Purpose & Profit Builders - Faith-Driven Entrepreneur Community",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Credit Hub | Credit Repair & Funding Community",
-    description: "Fix your credit. Secure $50K-$250K in funding. Build a funding business using the same system behind $30M+ secured.",
-    images: ["/credit-hub-logo.svg"],
+    title: "Purpose & Profit Builders | Faith-Driven Entrepreneur Community",
+    description: "Build consistent income from $0-$10K/mo using Kingdom economics and simple AI systems. No hustle. No burnout.",
+    images: ["/ppb-logo.svg"],
   },
 };
 

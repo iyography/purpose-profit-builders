@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Menu, X, Archive, Trash2, Pencil } from "lucide-react";
 
-// The Credit Hub theme colors
-const ORANGE_BG = '#fb923c'; // Orange background like yellow in BBC
-const BLUE = '#1d4ed8'; // Blue accent
+// Purpose & Profit Builders theme colors
+const GOLD_BG = '#D4AF37'; // Gold background
+const GOLD_VIVID = '#FFD700'; // Gold accent
 
 interface WinReview {
   id: number;
@@ -31,21 +31,21 @@ const randomCategory = () => categories[Math.floor(Math.random() * categories.le
 const randomLevel = () => Math.floor(Math.random() * 7) + 2; // 2-8
 
 const initialWins: WinReview[] = [
-  { id: 1, name: "Sebastian Schroeder", content: "Got 3 collections removed in my first month! Before joining The Credit Hub I had no idea where to start with my credit repair journey. The team walked me through every dispute letter, every strategy, and held me accountable. My score jumped 85 points in just 30 days. This community is the real deal!", likes: 47, comments: 23, timeAgo: "1d ago", category: "Win", level: 4, date: "Jan '26", hasFire: true },
-  { id: 2, name: "Daner Bervari", content: "The Credit Hub has been, since I joined, a place of real financial transformation. For the first time, I understood how credit actually works and felt the accountability pushing me to take action on my disputes. This is the only community where I feel like people genuinely want to see me win financially.", likes: 35, comments: 18, timeAgo: "Jun 27", category: "Win", level: 4, date: "Jun '25", hasFire: true },
-  { id: 3, name: "Amber Huttenlocker", content: "Score went from 520 to 720 in 6 months! The Credit Hub gave me a clear roadmap and the confidence to take control of my financial future.", likes: 24, comments: 10, timeAgo: "3d ago", category: "Win", level: 4, date: "Jan '26" },
-  { id: 4, name: "Nathan Archer", content: "The Credit Hub helped me understand that credit repair isn't a mystery - it's a system. The community shares real strategies, real dispute templates, and real results. I went from being denied everywhere to getting approved for a $25K business line of credit. The diversity of knowledge here is incredible - people helping each other with everything from personal credit to business funding.", likes: 42, comments: 20, timeAgo: "Jun 27", category: "Discuss", level: 3, date: "Jun '25", hasFire: true },
-  { id: 5, name: "David Martinez", content: "Approved for $50K in business funding! My credit goals are finally getting done. I've never been more consistent with my financial strategy!", likes: 19, comments: 8, timeAgo: "Jun 27", category: "Win", level: 3, date: "Jun '25" },
-  { id: 6, name: "Reema Rana", content: "I'm deeply grateful for The Credit Hub community. When I found this group I was overwhelmed by debt and had no idea how to fix my credit. Being here, surrounded by people who've been through the same struggles, I don't feel alone anymore. Every day I learn something new - dispute strategies, funding hacks, credit card stacking techniques. It's made me believe in my financial future!", likes: 38, comments: 17, timeAgo: "Jul 4", category: "Win", level: 5, date: "Jul '25", hasFire: true },
-  { id: 7, name: "Alex Thompson", content: "Just got my first tradeline added and my score bumped 40 points overnight! The knowledge shared on tonight's call was incredible. The dedication everyone shows here to helping each other level up financially is inspiring!", likes: 15, comments: 6, timeAgo: "22h ago", category: "Share", level: 6, date: "Jan '26" },
-  { id: 8, name: "Zen Gabriel", content: "Just got APPROVED for my first business credit card - $10K limit! I learned the entire business credit building process inside The Credit Hub, and after working the steps for a few months I finally got that first approval. Having the knowledge and support to make this happen is everything!", likes: 52, comments: 31, timeAgo: "1d ago", category: "Win", level: 3, date: "Jan '26", hasFire: true },
-  { id: 9, name: "Rainbow Bird", content: "The Credit Hub is a powerful community that helps me take consistent action toward financial freedom every single day.", likes: 28, comments: 12, timeAgo: "2d ago", category: "Win", level: 5, date: "Jan '26" },
-  { id: 10, name: "Rainbow Bird", content: "I just got approved for $75K in total funding across 3 business credit lines! And we're just halfway through the month! This is a next-level improvement in my financial life. My credit score has gone from 580 to 740 since joining. I'm so grateful for the coaching, strategies, and encouragement from this community!", likes: 45, comments: 22, timeAgo: "Aug 23", category: "Win", level: 5, date: "Aug '25", hasFire: true },
-  { id: 11, name: "Jessica Williams", content: "Finally found a community where people understand the credit repair journey. The step-by-step dispute process here actually works. Got 5 negative items removed in my first 60 days. Real support and real results.", likes: 29, comments: 13, timeAgo: "8h ago", category: "Win", level: 4, date: "Jan '26" },
-  { id: 12, name: "Michael Brown", content: "The knowledge in this community is incredible - people sharing strategies for everything from Section 609 disputes to business credit stacking. No gatekeeping, just real people helping each other build wealth through better credit.", likes: 21, comments: 9, timeAgo: "12h ago", category: "Discuss", level: 5, date: "Jan '26" },
-  { id: 13, name: "Sarah Chen", content: "The strategies and support in this community completely transformed my credit profile. Went from a 490 to a 695 and just got approved for my first home loan. I'm in tears!", likes: 18, comments: 7, timeAgo: "15h ago", category: "Win", level: 4, date: "Jan '26" },
-  { id: 14, name: "Marcus Rodriguez", content: "This community gets it. Finally found people who understand that bad credit doesn't define you - it's just a starting point. Built my entire business funding portfolio through strategies I learned here.", likes: 25, comments: 11, timeAgo: "18h ago", category: "Win", level: 5, date: "Jan '26" },
-  { id: 15, name: "Emily Davis", content: "The energy in this community is incredible. Watching everyone celebrate each other's credit score jumps and funding approvals - this is what financial empowerment looks like.", likes: 33, comments: 15, timeAgo: "20h ago", category: "Discuss", level: 7, date: "Jan '26" },
+  { id: 1, name: "Sebastian Schroeder", content: "Hit my first $5K month! Before joining Purpose & Profit Builders I was scattered and overwhelmed trying to figure everything out alone. Theodore's systems approach changed everything. The 7-Day Sprint gave me the clarity I needed, and within 30 days I had my first 3 paying clients. This community is the real deal!", likes: 47, comments: 23, timeAgo: "1d ago", category: "Win", level: 4, date: "Jan '26", hasFire: true },
+  { id: 2, name: "Daner Bervari", content: "Purpose & Profit Builders has been, since I joined, a place of real transformation. For the first time, I understood how to align my calling with income and felt the accountability pushing me to take action. This is the only community where I feel like people genuinely want to see me win — spiritually AND financially.", likes: 35, comments: 18, timeAgo: "Jun 27", category: "Win", level: 4, date: "Jun '25", hasFire: true },
+  { id: 3, name: "Amber Huttenlocker", content: "Went from $0 to $8K/mo in 6 months! PPB gave me a clear roadmap and the confidence to build a faith-aligned business that actually works.", likes: 24, comments: 10, timeAgo: "3d ago", category: "Win", level: 4, date: "Jan '26" },
+  { id: 4, name: "Nathan Archer", content: "PPB helped me understand that building a business isn't a mystery — it's a system. The community shares real AI strategies, real templates, and real results. I went from being stuck at $1K/mo to consistently hitting $6K. The diversity of knowledge here is incredible — people helping each other with everything from offer creation to AI automation.", likes: 42, comments: 20, timeAgo: "Jun 27", category: "Discuss", level: 3, date: "Jun '25", hasFire: true },
+  { id: 5, name: "David Martinez", content: "Just closed my biggest client yet — $3K project! My business goals are finally getting done. I've never been more consistent with my daily actions!", likes: 19, comments: 8, timeAgo: "Jun 27", category: "Win", level: 3, date: "Jun '25" },
+  { id: 6, name: "Reema Rana", content: "I'm deeply grateful for the PPB community. When I found this group I was overwhelmed and had no idea how to turn my calling into income. Being here, surrounded by faith-driven builders who've been through the same journey, I don't feel alone anymore. Every day I learn something new — AI systems, client strategies, Kingdom business principles. It's made me believe in my purpose!", likes: 38, comments: 17, timeAgo: "Jul 4", category: "Win", level: 5, date: "Jul '25", hasFire: true },
+  { id: 7, name: "Alex Thompson", content: "Just set up my first AI automation and it saved me 15 hours this week! The knowledge shared on tonight's Kingdom Call was incredible. The dedication everyone shows here to helping each other level up is inspiring!", likes: 15, comments: 6, timeAgo: "22h ago", category: "Share", level: 6, date: "Jan '26" },
+  { id: 8, name: "Zen Gabriel", content: "Just landed my first $10K month! I learned the entire systems-based approach inside PPB, and after working the Sprint framework for a few months I finally broke through. Having the knowledge, prayer support, and accountability to make this happen is everything!", likes: 52, comments: 31, timeAgo: "1d ago", category: "Win", level: 3, date: "Jan '26", hasFire: true },
+  { id: 9, name: "Grace Mitchell", content: "PPB is a powerful community that helps me take consistent action toward my God-given purpose every single day. No hustle, just alignment.", likes: 28, comments: 12, timeAgo: "2d ago", category: "Win", level: 5, date: "Jan '26" },
+  { id: 10, name: "James Powell", content: "I just hit $7K for the month and we're only halfway through! This is a next-level improvement in my business. My income has gone from $500/mo to consistent $7K since joining. I'm so grateful for the coaching, AI systems, and encouragement from this community!", likes: 45, comments: 22, timeAgo: "Aug 23", category: "Win", level: 5, date: "Aug '25", hasFire: true },
+  { id: 11, name: "Jessica Williams", content: "Finally found a community where people understand the faith-driven business journey. The step-by-step AI systems here actually work. Got 3 new clients in my first 60 days using the templates. Real support and real results.", likes: 29, comments: 13, timeAgo: "8h ago", category: "Win", level: 4, date: "Jan '26" },
+  { id: 12, name: "Michael Brown", content: "The knowledge in this community is incredible — people sharing strategies for everything from AI automation to Kingdom-aligned selling. No gatekeeping, just real people helping each other build income with integrity.", likes: 21, comments: 9, timeAgo: "12h ago", category: "Discuss", level: 5, date: "Jan '26" },
+  { id: 13, name: "Sarah Chen", content: "The strategies and support in this community completely transformed my business. Went from idea stage to $4K/mo and just signed my biggest retainer client. I'm in tears of gratitude!", likes: 18, comments: 7, timeAgo: "15h ago", category: "Win", level: 4, date: "Jan '26" },
+  { id: 14, name: "Marcus Rodriguez", content: "This community gets it. Finally found people who understand that being called doesn't mean being broke. Built my entire service business through strategies and AI systems I learned here.", likes: 25, comments: 11, timeAgo: "18h ago", category: "Win", level: 5, date: "Jan '26" },
+  { id: 15, name: "Emily Davis", content: "The energy in this community is incredible. Watching everyone celebrate each other's income milestones and business breakthroughs — this is what Kingdom building looks like.", likes: 33, comments: 15, timeAgo: "20h ago", category: "Discuss", level: 7, date: "Jan '26" },
 ];
 
 export default function HiddenWins() {
@@ -61,7 +61,7 @@ export default function HiddenWins() {
   // Draggable wins state - load from localStorage if available
   const [wins, setWins] = useState<WinReview[]>(() => {
     try {
-      const savedOrder = localStorage.getItem('theCreditHubWinsOrder');
+      const savedOrder = localStorage.getItem('ppbWinsOrder');
       if (savedOrder) {
         const orderIds = JSON.parse(savedOrder) as number[];
         if (Array.isArray(orderIds)) {
@@ -94,7 +94,7 @@ export default function HiddenWins() {
       return;
     }
     const orderIds = wins.map(w => w.id);
-    localStorage.setItem('theCreditHubWinsOrder', JSON.stringify(orderIds));
+    localStorage.setItem('ppbWinsOrder', JSON.stringify(orderIds));
   }, [wins]);
 
   // Edit state
@@ -335,17 +335,17 @@ export default function HiddenWins() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: ORANGE_BG }}>
+    <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: GOLD_BG }}>
       {/* Background graphic elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Large decorative circles */}
         <div
           className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full opacity-20"
-          style={{ backgroundColor: BLUE }}
+          style={{ backgroundColor: GOLD_BG }}
         />
         <div
           className="absolute -bottom-48 -left-48 w-[500px] h-[500px] rounded-full opacity-15"
-          style={{ backgroundColor: BLUE }}
+          style={{ backgroundColor: GOLD_BG }}
         />
         {/* Diagonal stripes */}
         <div className="absolute top-0 right-0 w-full h-full opacity-5">
@@ -354,7 +354,7 @@ export default function HiddenWins() {
               key={i}
               className="absolute h-[2px] w-[200%] origin-left"
               style={{
-                backgroundColor: BLUE,
+                backgroundColor: GOLD_BG,
                 top: `${i * 120}px`,
                 left: '-50%',
                 transform: 'rotate(-15deg)'
@@ -482,7 +482,7 @@ export default function HiddenWins() {
           <div className="flex items-center justify-between h-16">
             <a href="/" className="flex items-center space-x-3">
               <span className="font-bold font-space-grotesk text-white" style={{ fontSize: 'clamp(1.05rem, 2vw, 1.35rem)' }}>
-                The Credit Hub
+                Purpose & Profit Builders
               </span>
             </a>
 
@@ -595,8 +595,8 @@ export default function HiddenWins() {
             <h1
               className="font-black font-space-grotesk tracking-tight"
               style={{
-                color: BLUE,
-                WebkitTextStroke: '2px ' + BLUE,
+                color: GOLD_BG,
+                WebkitTextStroke: '2px ' + GOLD_BG,
                 paintOrder: 'stroke fill',
                 fontSize: `${titleSize}px`
               }}
@@ -704,7 +704,7 @@ export default function HiddenWins() {
         onClick={() => setHideAllCards(!hideAllCards)}
         className="fixed bottom-8 left-8 z-[10001] px-6 py-3 rounded-xl font-bold shadow-lg transition-all hover:scale-105"
         style={{
-          backgroundColor: hideAllCards ? BLUE : '#000000',
+          backgroundColor: hideAllCards ? GOLD_BG : '#000000',
           color: '#ffffff'
         }}
       >
@@ -730,7 +730,7 @@ export default function HiddenWins() {
         }}
         className="fixed bottom-24 left-8 z-[10001] px-6 py-3 rounded-xl font-bold shadow-lg transition-all hover:scale-105"
         style={{
-          backgroundColor: (!showRed && !showGreen && !showBlue && !showPurple) ? BLUE : '#000000',
+          backgroundColor: (!showRed && !showGreen && !showBlue && !showPurple) ? GOLD_BG : '#000000',
           color: '#ffffff'
         }}
       >
@@ -792,7 +792,7 @@ export default function HiddenWins() {
 
       <motion.footer
         className="relative z-20 py-10 w-full"
-        style={{ backgroundColor: ORANGE_BG }}
+        style={{ backgroundColor: GOLD_BG }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 0.8 }}
@@ -800,24 +800,24 @@ export default function HiddenWins() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-8">
             <a href="/" className="flex-shrink-0">
-              <span className="font-bold text-2xl" style={{ color: BLUE }}>
-                The Credit Hub
+              <span className="font-bold text-2xl" style={{ color: GOLD_BG }}>
+                Purpose & Profit Builders
               </span>
             </a>
 
             <div className="flex flex-wrap justify-center md:justify-end gap-6 text-sm items-center">
-              <a href="/" className="transition-colors duration-200 font-space-grotesk" style={{ color: BLUE }}>
+              <a href="/" className="transition-colors duration-200 font-space-grotesk" style={{ color: GOLD_BG }}>
                 Home
               </a>
-              <a href="https://www.skool.com/tch" target="_blank" rel="noopener noreferrer" className="transition-colors duration-200 font-space-grotesk" style={{ color: BLUE }}>
+              <a href="https://www.skool.com/thezoexway/about" target="_blank" rel="noopener noreferrer" className="transition-colors duration-200 font-space-grotesk" style={{ color: GOLD_BG }}>
                 Community
               </a>
             </div>
           </div>
 
-          <div className="w-full flex justify-center pt-6" style={{ borderTop: `1px solid ${BLUE}30` }}>
-            <p className="text-sm font-space-grotesk" style={{ color: BLUE, opacity: 0.7 }}>
-              © 2026 The Credit Hub. All rights reserved.
+          <div className="w-full flex justify-center pt-6" style={{ borderTop: `1px solid ${GOLD_BG}30` }}>
+            <p className="text-sm font-space-grotesk" style={{ color: GOLD_BG, opacity: 0.7 }}>
+              © 2026 Purpose & Profit Builders. All rights reserved.
             </p>
           </div>
         </div>

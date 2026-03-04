@@ -10,14 +10,10 @@ interface AdminAuthProps {
 
 const APPROVED_EMAILS = [
   'davidiya3@gmail.com',
-  'inbillsmind@gmail.com',
-  'rexloyer@gmail.com',
 ];
 
 const DEFAULT_PASSWORDS: { [key: string]: string } = {
-  'davidiya3@gmail.com': 'CreditHub2026!',
-  'inbillsmind@gmail.com': 'CreditHub2026!',
-  'rexloyer@gmail.com': 'CreditHub2026!',
+  'davidiya3@gmail.com': 'PPBuilders2026!',
 };
 
 export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
@@ -59,7 +55,7 @@ export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
     }
 
     setTimeout(() => {
-      localStorage.setItem('creditHubAdminEmail', email);
+      localStorage.setItem('ppbAdminEmail', email);
       onAuthenticate(email);
       setLoading(false);
     }, 1000);
@@ -89,25 +85,25 @@ export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
       <>
         <FloatingDots />
         <Navbar hideNavLinks={true} />
-        <div className="min-h-screen bg-gray-50 pt-24 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="min-h-screen bg-pure-black pt-24 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-md w-full space-y-8">
             <div className="text-center">
               <img
-                src="/credit-hub-logo.svg"
-                alt="The Credit Hub"
+                src="/ppb-logo.svg"
+                alt="Purpose & Profit Builders"
                 className="mx-auto h-16 w-auto"
               />
-              <h2 className="mt-6 text-3xl font-bold text-gray-900">
+              <h2 className="mt-6 text-3xl font-bold text-off-white">
                 Password Reset
               </h2>
-              <p className="mt-2 text-sm text-gray-600">
+              <p className="mt-2 text-sm text-off-white/60">
                 Enter your authorized email to retrieve your password
               </p>
             </div>
-            
+
             <form className="mt-8 space-y-6" onSubmit={handlePasswordReset}>
               <div>
-                <label htmlFor="resetEmail" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="resetEmail" className="block text-sm font-medium text-off-white/70">
                   Email address
                 </label>
                 <input
@@ -118,14 +114,14 @@ export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
                   required
                   value={resetEmail}
                   onChange={(e) => setResetEmail(e.target.value)}
-                  className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
+                  className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gold-vivid/20 placeholder-off-white/30 text-off-white bg-dark-gray rounded-md focus:outline-none focus:ring-gold-vivid focus:border-gold-vivid focus:z-10 sm:text-sm"
                   placeholder="Enter your email address"
                 />
               </div>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-md p-3">
-                  <p className="text-sm text-red-600">{error}</p>
+                <div className="bg-red-900/30 border border-red-500/30 rounded-md p-3">
+                  <p className="text-sm text-red-400">{error}</p>
                 </div>
               )}
 
@@ -136,13 +132,13 @@ export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
                     setShowResetForm(false);
                     setError('');
                   }}
-                  className="flex-1 py-3 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                  className="flex-1 py-3 px-4 border border-off-white/20 text-sm font-medium rounded-md text-off-white bg-dark-gray hover:bg-dark-cream focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-vivid"
                 >
                   Back to Sign In
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                  className="flex-1 py-3 px-4 border border-transparent text-sm font-medium rounded-md text-black bg-gold-vivid hover:bg-gold-warm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-vivid"
                 >
                   Get Password
                 </button>
@@ -158,26 +154,26 @@ export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
     <>
       <FloatingDots />
       <Navbar hideNavLinks={true} />
-      <div className="min-h-screen bg-gray-50 pt-24 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="min-h-screen bg-pure-black pt-24 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <img
-              src="/credit-hub-logo.svg"
-              alt="The Credit Hub"
+              src="/ppb-logo.svg"
+              alt="Purpose & Profit Builders"
               className="mx-auto h-16 w-auto"
             />
-            <h2 className="mt-6 text-3xl font-bold text-gray-900">
+            <h2 className="mt-6 text-3xl font-bold text-off-white">
               Admin Portal Access
             </h2>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-off-white/60">
               Enter your credentials to access the admin dashboard
             </p>
           </div>
-          
+
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="email" className="block text-sm font-medium text-off-white/70">
                   Email address
                 </label>
                 <input
@@ -188,13 +184,13 @@ export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
+                  className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gold-vivid/20 placeholder-off-white/30 text-off-white bg-dark-gray rounded-md focus:outline-none focus:ring-gold-vivid focus:border-gold-vivid focus:z-10 sm:text-sm"
                   placeholder="Enter your email address"
                 />
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="block text-sm font-medium text-off-white/70">
                   Password
                 </label>
                 <input
@@ -205,15 +201,15 @@ export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
+                  className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gold-vivid/20 placeholder-off-white/30 text-off-white bg-dark-gray rounded-md focus:outline-none focus:ring-gold-vivid focus:border-gold-vivid focus:z-10 sm:text-sm"
                   placeholder="Enter your password"
                 />
               </div>
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-md p-3">
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="bg-red-900/30 border border-red-500/30 rounded-md p-3">
+                <p className="text-sm text-red-400">{error}</p>
               </div>
             )}
 
@@ -221,11 +217,11 @@ export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-black bg-gold-vivid hover:bg-gold-warm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-vivid disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black mr-2"></div>
                     Verifying access...
                   </>
                 ) : (
@@ -238,12 +234,12 @@ export default function AdminAuth({ onAuthenticate }: AdminAuthProps) {
               <button
                 type="button"
                 onClick={() => setShowResetForm(true)}
-                className="text-sm text-orange-600 hover:text-orange-500"
+                className="text-sm text-gold-vivid hover:text-gold-warm"
               >
                 Forgot your password?
               </button>
-              <p className="text-xs text-gray-500">
-                Only authorized Credit Hub administrators can access this portal.
+              <p className="text-xs text-off-white/40">
+                Only authorized Purpose &amp; Profit Builders administrators can access this portal.
               </p>
             </div>
           </form>

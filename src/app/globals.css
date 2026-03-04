@@ -1,42 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  /* The Credit Hub Brand Colors - SATURATED */
-  --orange-primary: #F97316;
-  --orange-vivid: #FF6B00;
-  --orange-light: #FB923C;
-  --orange-deep: #EA580C;
-  --orange-warm: #FDBA74;
-  --orange-hot: #FF4500;
-  --sunset-coral: #FF6347;
-  --amber-gold: #F59E0B;
-  --cream-white: #FFFBEB;
-  --pure-white: #FFFFFF;
-  --soft-white: #FFF7ED;
-  --warm-gray: #FDF4E8;
-  --charcoal: #292524;
-  --warm-black: #1C1917;
+  /* Purpose & Profit Builders Brand Colors - BLACK & GOLD */
+  --gold-primary: #D4AF37;
+  --gold-vivid: #FFD700;
+  --gold-light: #F0E68C;
+  --gold-deep: #B8860B;
+  --gold-warm: #DAA520;
+  --gold-hot: #FFB800;
+  --gold-accent: #C5A55A;
+  --gold-muted: #AA8C2C;
+  --dark-cream: #1A1A1A;
+  --dark-soft: #111111;
+  --dark-gray: #1E1E1E;
+  --off-white: #F5F5F0;
+  --pure-black: #000000;
 
-  --background: var(--pure-white);
-  --foreground: #1C1917;
+  --background: var(--pure-black);
+  --foreground: var(--off-white);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-orange-primary: var(--orange-primary);
-  --color-orange-vivid: var(--orange-vivid);
-  --color-orange-light: var(--orange-light);
-  --color-orange-deep: var(--orange-deep);
-  --color-orange-warm: var(--orange-warm);
-  --color-orange-hot: var(--orange-hot);
-  --color-sunset-coral: var(--sunset-coral);
-  --color-amber-gold: var(--amber-gold);
-  --color-cream-white: var(--cream-white);
-  --color-soft-white: var(--soft-white);
-  --color-warm-gray: var(--warm-gray);
-  --color-charcoal: var(--charcoal);
-  --color-warm-black: var(--warm-black);
+  --color-gold-primary: var(--gold-primary);
+  --color-gold-vivid: var(--gold-vivid);
+  --color-gold-light: var(--gold-light);
+  --color-gold-deep: var(--gold-deep);
+  --color-gold-warm: var(--gold-warm);
+  --color-gold-hot: var(--gold-hot);
+  --color-gold-accent: var(--gold-accent);
+  --color-gold-muted: var(--gold-muted);
+  --color-dark-cream: var(--dark-cream);
+  --color-dark-soft: var(--dark-soft);
+  --color-dark-gray: var(--dark-gray);
+  --color-off-white: var(--off-white);
+  --color-pure-black: var(--pure-black);
   --font-display: var(--font-space-grotesk);
   --font-sans: var(--font-inter);
 }
@@ -58,8 +57,8 @@ body {
 
 /* Selection styling */
 ::selection {
-  background-color: var(--orange-vivid);
-  color: white;
+  background-color: var(--gold-vivid);
+  color: black;
 }
 
 /* Mesh Gradient Animations */
@@ -81,15 +80,25 @@ body {
   66% { transform: translateY(5px) rotate(-1deg); }
 }
 
+@keyframes shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+@keyframes goldGlow {
+  0%, 100% { text-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+  50% { text-shadow: 0 0 40px rgba(255, 215, 0, 0.5), 0 0 60px rgba(212, 175, 55, 0.2); }
+}
+
 .mesh-gradient-bg {
-  background: linear-gradient(-45deg, #FF6B00, #EA580C, #F59E0B, #FF4500, #FB923C, #FF6347);
+  background: linear-gradient(-45deg, #D4AF37, #B8860B, #FFD700, #FFB800, #DAA520, #C5A55A);
   background-size: 400% 400%;
   animation: meshGradient 15s ease infinite;
 }
 
 .mesh-gradient-hero {
   position: relative;
-  background: linear-gradient(135deg, #FFFFFF 0%, #FFF7ED 30%, #FFFBEB 60%, #FFFFFF 100%);
+  background: linear-gradient(135deg, #000000 0%, #0A0A0A 30%, #111111 60%, #000000 100%);
   overflow: hidden;
 }
 
@@ -98,10 +107,10 @@ body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 20% 20%, rgba(255, 107, 0, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(245, 158, 11, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse at 60% 30%, rgba(255, 69, 0, 0.1) 0%, transparent 45%),
-    radial-gradient(ellipse at 30% 70%, rgba(251, 146, 60, 0.08) 0%, transparent 55%);
+    radial-gradient(ellipse at 20% 20%, rgba(212, 175, 55, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(255, 215, 0, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 30%, rgba(255, 184, 0, 0.06) 0%, transparent 45%),
+    radial-gradient(ellipse at 30% 70%, rgba(218, 165, 32, 0.05) 0%, transparent 55%);
   background-size: 200% 200%;
   animation: meshGradient 20s ease infinite;
   z-index: 0;
@@ -117,21 +126,43 @@ body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 10% 50%, rgba(255, 107, 0, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 90% 50%, rgba(245, 158, 11, 0.06) 0%, transparent 50%);
+    radial-gradient(ellipse at 10% 50%, rgba(212, 175, 55, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 50%, rgba(255, 215, 0, 0.04) 0%, transparent 50%);
   background-size: 200% 200%;
   animation: meshGradient 25s ease infinite;
   z-index: 0;
 }
 
 .mesh-gradient-card {
-  background: linear-gradient(135deg, rgba(255, 107, 0, 0.06) 0%, rgba(255, 69, 0, 0.03) 100%);
-  border: 1px solid rgba(255, 107, 0, 0.15);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(255, 184, 0, 0.03) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.15);
   backdrop-filter: blur(10px);
 }
 
 .mesh-gradient-card:hover {
-  background: linear-gradient(135deg, rgba(255, 107, 0, 0.12) 0%, rgba(255, 69, 0, 0.06) 100%);
-  border-color: rgba(255, 107, 0, 0.35);
-  box-shadow: 0 8px 32px rgba(255, 107, 0, 0.1);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(255, 184, 0, 0.08) 100%);
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow: 0 8px 32px rgba(212, 175, 55, 0.15);
+}
+
+/* Gold shimmer text effect */
+.gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    #D4AF37 0%,
+    #FFD700 25%,
+    #FFF5CC 50%,
+    #FFD700 75%,
+    #D4AF37 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 6s ease-in-out infinite;
+}
+
+/* Gold glow for headings */
+.gold-glow {
+  animation: goldGlow 3s ease-in-out infinite;
 }

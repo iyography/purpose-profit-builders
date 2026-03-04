@@ -1,27 +1,27 @@
-export type CreditProfile = 'credit-builder' | 'funding-seeker' | 'explorer';
+export type SprintProfile = 'kingdom-starter' | 'systems-builder' | 'explorer';
 
-export interface CreditQuizQuestion {
+export interface SprintQuestion {
   id: string;
   question: string;
   type: 'single' | 'multi-select' | 'text';
-  options?: CreditQuizOption[];
+  options?: SprintOption[];
   required: boolean;
 }
 
-export interface CreditQuizOption {
+export interface SprintOption {
   id: string;
   text: string;
 }
 
-export interface CreditQuizAnswers {
+export interface SprintAnswers {
   q1_goal: string;
-  q2_fico: string;
-  q3_negatives: string[];
-  q4_utilization: string;
-  q5_two_cards: string;
-  q6_in_business: string;
-  q7_revenue: string;
-  q8_occupation: string;
+  q2_income: string;
+  q3_offer: string;
+  q4_ai_usage: string;
+  q5_systems: string;
+  q6_faith_alignment: string;
+  q7_time_spent: string;
+  q8_description: string;
   q9_challenge: string;
   q10_fix_one_thing: string;
 }
@@ -32,8 +32,8 @@ export interface ContactInfo {
   phone: string;
 }
 
-export interface CreditQuizResult {
-  profile: CreditProfile;
+export interface SprintResult {
+  profile: SprintProfile;
   profileName: string;
   profileEmoji: string;
   primaryChallenge: string;

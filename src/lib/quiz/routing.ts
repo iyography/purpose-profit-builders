@@ -1,78 +1,67 @@
-import { CreditQuizAnswers, CreditProfile, CreditQuizResult } from './types';
+import { SprintAnswers, SprintProfile, SprintResult } from './types';
 
-export function determineProfile(answers: CreditQuizAnswers): CreditProfile {
+export function determineProfile(answers: SprintAnswers): SprintProfile {
   const justExploring = answers.q1_goal === 'exploring';
   if (justExploring) return 'explorer';
 
-  const ficoHigh = ['700-750', '750-plus'].includes(answers.q2_fico);
-  const noNegatives =
-    answers.q3_negatives.length === 1 && answers.q3_negatives[0] === 'clean';
-  const lowUtilization = ['debt-free', 'under-15', '15-30', 'can-reduce'].includes(
-    answers.q4_utilization
-  );
-  const hasTwoCards = answers.q5_two_cards === 'yes';
+  const hasOffer = ['yes-selling', 'yes-not-selling'].includes(answers.q3_offer);
+  const hasIncome = !['zero', 'under-1k'].includes(answers.q2_income);
+  const usesAI = ['daily', 'sometimes'].includes(answers.q4_ai_usage);
+  const hasSystems = answers.q5_systems === 'yes';
 
-  if (ficoHigh && noNegatives && lowUtilization && hasTwoCards) {
-    return 'funding-seeker';
+  if (hasOffer && hasIncome && (usesAI || hasSystems)) {
+    return 'systems-builder';
   }
 
-  return 'credit-builder';
+  return 'kingdom-starter';
 }
 
 export function generateResult(
-  profile: CreditProfile,
-  answers: CreditQuizAnswers
-): CreditQuizResult {
-  if (profile === 'funding-seeker') {
-    return buildFundingSeekerResult(answers);
+  profile: SprintProfile,
+  answers: SprintAnswers
+): SprintResult {
+  if (profile === 'systems-builder') {
+    return buildSystemsBuilderResult(answers);
   }
   if (profile === 'explorer') {
     return buildExplorerResult(answers);
   }
-  return buildCreditBuilderResult(answers);
+  return buildKingdomStarterResult(answers);
 }
 
-function buildCreditBuilderResult(answers: CreditQuizAnswers): CreditQuizResult {
+function buildKingdomStarterResult(answers: SprintAnswers): SprintResult {
   const whatsWorking: string[] = [];
   const needsAttention: string[] = [];
 
-  // Analyze FICO
-  if (['700-750', '750-plus'].includes(answers.q2_fico)) {
-    whatsWorking.push('Your FICO score is in a strong range');
-  } else if (['680-700'].includes(answers.q2_fico)) {
-    whatsWorking.push('Your FICO score is close to fundable range');
-    needsAttention.push('A small score boost could unlock major funding opportunities');
+  // Analyze faith alignment
+  if (['fully-aligned', 'mostly-aligned'].includes(answers.q6_faith_alignment)) {
+    whatsWorking.push('Your work is connected to your God-given purpose');
   } else {
-    needsAttention.push('Your FICO score needs improvement before accessing premium funding');
+    needsAttention.push('Aligning your business with your calling will unlock clarity and confidence');
   }
 
-  // Analyze negatives
-  if (answers.q3_negatives.includes('clean')) {
-    whatsWorking.push('Clean credit report with no negative items');
-  } else {
-    const negativeCount = answers.q3_negatives.filter(n => n !== 'getting-removed').length;
-    if (answers.q3_negatives.includes('getting-removed')) {
-      whatsWorking.push("You're already working on removing negative items");
+  // Analyze offer
+  if (['yes-selling', 'yes-not-selling'].includes(answers.q3_offer)) {
+    whatsWorking.push('You already have a product or service to offer');
+    if (answers.q3_offer === 'yes-not-selling') {
+      needsAttention.push('Your offer exists but needs a consistent sales system');
     }
-    if (negativeCount > 0) {
-      needsAttention.push('Negative items on your report are limiting your approvals');
-    }
+  } else {
+    needsAttention.push('Defining a clear, Kingdom-aligned offer is your first step');
   }
 
-  // Analyze utilization
-  if (['debt-free', 'under-15'].includes(answers.q4_utilization)) {
-    whatsWorking.push('Your credit utilization is in a healthy range');
-  } else if (answers.q4_utilization === 'can-reduce') {
-    whatsWorking.push("You're positioned to quickly reduce utilization");
+  // Analyze AI usage
+  if (['daily', 'sometimes'].includes(answers.q4_ai_usage)) {
+    whatsWorking.push("You're already leveraging AI tools in your workflow");
   } else {
-    needsAttention.push('High credit utilization is dragging down your score');
+    needsAttention.push('Simple AI systems can save you 20+ hours per week');
   }
 
-  // Analyze cards
-  if (answers.q5_two_cards === 'yes') {
-    whatsWorking.push('You have established credit card history');
+  // Analyze time investment
+  if (['10-20', '20-plus'].includes(answers.q7_time_spent)) {
+    whatsWorking.push("You're investing real time into building your business");
   } else {
-    needsAttention.push('Building primary tradelines will strengthen your credit profile');
+    needsAttention.push('Increasing focused time (even 15 min/day) will accelerate your results');
   }
 
   // Ensure at least one item in each
@@ -80,109 +69,121 @@ function buildCreditBuilderResult(answers: CreditQuizAnswers): CreditQuizResult 
     whatsWorking.push("You've taken the first step by assessing where you stand");
   }
   if (needsAttention.length === 0) {
-    needsAttention.push('Fine-tuning your profile for maximum funding potential');
+    needsAttention.push('Fine-tuning your systems for consistent income');
   }
 
   // Determine primary challenge
-  let primaryChallenge = 'Building a fundable credit profile';
-  if (answers.q9_challenge === 'cleaning-credit') {
-    primaryChallenge = 'Removing negative items and rebuilding your score';
-  } else if (answers.q9_challenge === 'getting-approved') {
-    primaryChallenge = 'Getting approved with your current credit profile';
-  } else if (answers.q9_challenge === 'feeling-stuck') {
-    primaryChallenge = 'Breaking through the credit repair plateau';
+  let primaryChallenge = 'Building a Kingdom-aligned business from the ground up';
+  if (answers.q9_challenge === 'no-clients') {
+    primaryChallenge = 'Getting consistent clients without pressure-based selling';
+  } else if (answers.q9_challenge === 'no-offer') {
+    primaryChallenge = 'Creating an offer your ideal clients actually want to pay for';
+  } else if (answers.q9_challenge === 'no-clarity') {
+    primaryChallenge = 'Getting clarity on your next steps and daily focus';
+  } else if (answers.q9_challenge === 'overwhelmed') {
+    primaryChallenge = 'Breaking free from overwhelm and building with peace';
   }
 
   return {
-    profile: 'credit-builder',
-    profileName: 'Credit Builder',
-    profileEmoji: '\u{1f527}',
+    profile: 'kingdom-starter',
+    profileName: 'Kingdom Starter',
+    profileEmoji: '\u{1f331}',
     primaryChallenge,
     summary: { whatsWorking, needsAttention },
     nextSteps: [
-      'Get a free credit audit to identify exactly what to dispute',
-      'Start rapid repair on the highest-impact negative items',
-      'Build a 90-day credit improvement roadmap with our team',
+      'Join the 7-Day Focus Sprint to build daily momentum (just 15 min/day)',
+      'Use our Kingdom Business Blueprint to align your calling with a clear offer',
+      'Connect with faith-driven builders in the community for accountability',
     ],
     cta: {
-      primary: { label: 'Book Free Credit Audit', url: '#credit-audit' },
-      secondary: { label: 'Upgrade to VIP Credit Repair', url: '#vip-credit' },
+      primary: { label: 'Join Purpose & Profit Builders', url: 'https://www.skool.com/thezoexway/about' },
+      secondary: { label: 'Start the 7-Day Sprint', url: 'https://www.skool.com/thezoexway/about' },
     },
   };
 }
 
-function buildFundingSeekerResult(answers: CreditQuizAnswers): CreditQuizResult {
+function buildSystemsBuilderResult(answers: SprintAnswers): SprintResult {
   const whatsWorking: string[] = [
-    'Strong FICO score puts you in the funding zone',
-    'Clean credit report with no red flags',
-    'Good credit utilization management',
-    'Established credit card tradelines',
+    'You have an offer and income \u2014 the foundation is solid',
+    "You're already generating revenue from your business",
   ];
+
+  if (['daily', 'sometimes'].includes(answers.q4_ai_usage)) {
+    whatsWorking.push("You're using AI tools to support your workflow");
+  }
+  if (answers.q5_systems === 'yes') {
+    whatsWorking.push('You have repeatable systems in place for client acquisition');
+  }
 
   const needsAttention: string[] = [];
 
-  if (answers.q6_in_business === 'no') {
-    needsAttention.push('Setting up a proper business entity to access business credit');
+  if (answers.q5_systems !== 'yes') {
+    needsAttention.push('Building automated systems so your business works without constant effort');
   }
-  if (['just-starting', 'under-10k'].includes(answers.q7_revenue)) {
-    needsAttention.push('Building revenue history to qualify for larger funding amounts');
+  if (!['daily'].includes(answers.q4_ai_usage)) {
+    needsAttention.push('Deepening your AI integration to save 20+ hours per week');
+  }
+  if (['mostly-aligned', 'not-aligned', 'unsure'].includes(answers.q6_faith_alignment)) {
+    needsAttention.push('Re-aligning your business operations with your Kingdom purpose');
   }
   if (needsAttention.length === 0) {
-    needsAttention.push('Optimizing your application strategy for maximum approvals');
+    needsAttention.push('Scaling your systems to hit consistent $10K+ months');
   }
 
-  let primaryChallenge = 'Maximizing your funding potential';
-  if (answers.q9_challenge === 'getting-approved') {
-    primaryChallenge = 'Unlocking the right funding sources for your profile';
-  } else if (answers.q9_challenge === 'knowing-next-steps') {
-    primaryChallenge = 'Creating a clear funding roadmap';
+  let primaryChallenge = 'Scaling your business with systems instead of hustle';
+  if (answers.q9_challenge === 'no-systems') {
+    primaryChallenge = 'Building automated systems so you stop doing everything manually';
+  } else if (answers.q9_challenge === 'no-clients') {
+    primaryChallenge = 'Creating a consistent client pipeline that runs on autopilot';
+  } else if (answers.q9_challenge === 'overwhelmed') {
+    primaryChallenge = 'Simplifying your operations so you can grow without burnout';
   }
 
   return {
-    profile: 'funding-seeker',
-    profileName: 'Funding Ready',
-    profileEmoji: '\u{1f4b0}',
+    profile: 'systems-builder',
+    profileName: 'Systems Builder',
+    profileEmoji: '\u{2699}\u{fe0f}',
     primaryChallenge,
     summary: { whatsWorking, needsAttention },
     nextSteps: [
-      'Book a funding strategy call to map out your approval plan',
-      'Get matched with the right lenders for your specific profile',
-      'Execute the funding fast track to access $50K\u2013$250K in capital',
+      'Map out your AI automation stack to eliminate manual tasks',
+      'Build a repeatable client acquisition system using our templates',
+      'Join the weekly Kingdom Calls for strategy and accountability',
     ],
     cta: {
-      primary: { label: 'Book Funding Strategy Call', url: '#funding-call' },
+      primary: { label: 'Join Purpose & Profit Builders', url: 'https://www.skool.com/thezoexway/about' },
     },
   };
 }
 
-function buildExplorerResult(answers: CreditQuizAnswers): CreditQuizResult {
+function buildExplorerResult(answers: SprintAnswers): SprintResult {
   const whatsWorking: string[] = [
-    "You're exploring your options \u2014 that's a smart first step",
+    "You're exploring your options \u2014 that's a wise first step",
   ];
   const needsAttention: string[] = [
-    'Understanding where your credit profile stands today',
-    'Learning the strategies behind credit repair and funding access',
+    'Getting clarity on your God-given purpose and how to monetize it',
+    'Learning simple systems that can generate income without overwhelm',
   ];
 
-  if (['700-750', '750-plus'].includes(answers.q2_fico)) {
-    whatsWorking.push('Your FICO score is already in a strong range');
-  } else if (answers.q2_fico !== 'not-sure') {
-    needsAttention.push('Your FICO score has room for improvement');
+  if (['fully-aligned', 'mostly-aligned'].includes(answers.q6_faith_alignment)) {
+    whatsWorking.push('You already feel a sense of purpose in your work');
+  } else {
+    needsAttention.push('Discovering the intersection of your calling and your income');
   }
 
   return {
     profile: 'explorer',
-    profileName: 'Credit Explorer',
+    profileName: 'Purpose Explorer',
     profileEmoji: '\u{1f9ed}',
-    primaryChallenge: 'Getting clear on your credit and funding path',
+    primaryChallenge: 'Getting clear on your purpose-driven path to profit',
     summary: { whatsWorking, needsAttention },
     nextSteps: [
-      'Join The Credit Hub community to learn from real credit transformations',
-      'Access our free training materials on credit repair fundamentals',
+      'Join Purpose & Profit Builders to learn from faith-driven entrepreneurs',
+      'Start the 7-Day Focus Sprint to gain clarity in just 15 minutes a day',
       'Connect with members who started exactly where you are',
     ],
     cta: {
-      primary: { label: 'Join The Credit Hub', url: 'https://www.skool.com/tch' },
+      primary: { label: 'Join Purpose & Profit Builders', url: 'https://www.skool.com/thezoexway/about' },
     },
   };
 }

@@ -7,47 +7,45 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 
-export interface QuizSubmission {
+export interface SprintSubmission {
   id: string;
   full_name: string;
   email: string;
   phone: string;
   profile: string;
   profile_name: string;
-  fico_range: string;
-  has_negatives: boolean;
-  negative_items: string[];
-  utilization: string;
-  has_two_cards: boolean;
-  in_business: boolean;
-  monthly_revenue: string;
-  occupation: string;
+  monthly_income: string;
+  has_offer: boolean;
+  offer_type: string;
+  uses_ai: boolean;
+  has_systems: boolean;
+  faith_alignment: string;
   biggest_challenge: string;
   answers: Record<string, unknown>;
   user_agent?: string;
   created_at: string;
 }
 
-export const submitQuizResult = async (submission: Omit<QuizSubmission, 'id' | 'created_at'>) => {
+export const submitSprintResult = async (submission: Omit<SprintSubmission, 'id' | 'created_at'>) => {
   if (!supabase) {
     throw new Error('Supabase not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.');
   }
 
   const { data, error } = await supabase
-    .from('credit_hub_quiz_submissions')
+    .from('ppb_sprint_submissions')
     .insert([submission]);
 
   if (error) throw error;
   return data;
 };
 
-export const getAllQuizSubmissions = async (): Promise<QuizSubmission[]> => {
+export const getAllSprintSubmissions = async (): Promise<SprintSubmission[]> => {
   if (!supabase) {
     throw new Error('Supabase not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.');
   }
 
   const { data, error } = await supabase
-    .from('credit_hub_quiz_submissions')
+    .from('ppb_sprint_submissions')
     .select('*')
     .order('created_at', { ascending: false });
 
@@ -55,13 +53,13 @@ export const getAllQuizSubmissions = async (): Promise<QuizSubmission[]> => {
   return data || [];
 };
 
-export const getQuizSubmissionsByDateRange = async (startDate: string, endDate: string): Promise<QuizSubmission[]> => {
+export const getSprintSubmissionsByDateRange = async (startDate: string, endDate: string): Promise<SprintSubmission[]> => {
   if (!supabase) {
     throw new Error('Supabase not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.');
   }
 
   const { data, error } = await supabase
-    .from('credit_hub_quiz_submissions')
+    .from('ppb_sprint_submissions')
     .select('*')
     .gte('created_at', startDate)
     .lte('created_at', endDate)
@@ -71,13 +69,13 @@ export const getQuizSubmissionsByDateRange = async (startDate: string, endDate: 
   return data || [];
 };
 
-export const getQuizSubmissionsByProfile = async (profile: string): Promise<QuizSubmission[]> => {
+export const getSprintSubmissionsByProfile = async (profile: string): Promise<SprintSubmission[]> => {
   if (!supabase) {
     throw new Error('Supabase not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.');
   }
 
   const { data, error } = await supabase
-    .from('credit_hub_quiz_submissions')
+    .from('ppb_sprint_submissions')
     .select('*')
     .eq('profile', profile)
     .order('created_at', { ascending: false });

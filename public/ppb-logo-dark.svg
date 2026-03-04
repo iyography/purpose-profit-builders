@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 60" fill="none">
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="50%" style="stop-color:#D4AF37"/>
+      <stop offset="100%" style="stop-color:#B8860B"/>
+    </linearGradient>
+    <linearGradient id="crownGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="100%" style="stop-color:#D4AF37"/>
+    </linearGradient>
+  </defs>
+  <!-- Crown icon -->
+  <g transform="translate(4, 8)">
+    <path d="M22 38H6L2 16l8 6 12-14 12 14 8-6-4 22z" fill="url(#crownGrad)" opacity="0.2" stroke="url(#logoGrad)" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M22 38H6L2 16l8 6 12-14 12 14 8-6-4 22z" fill="none" stroke="url(#logoGrad)" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="22" cy="8" r="2" fill="#FFD700"/>
+    <circle cx="2" cy="16" r="1.5" fill="#FFD700"/>
+    <circle cx="42" cy="16" r="1.5" fill="#FFD700"/>
+    <rect x="6" y="40" width="32" height="3" rx="1.5" fill="url(#logoGrad)" opacity="0.6"/>
+  </g>
+  <!-- PURPOSE & PROFIT text -->
+  <text x="58" y="26" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="800" letter-spacing="3" fill="url(#logoGrad)">PURPOSE &amp; PROFIT</text>
+  <!-- BUILDERS text -->
+  <text x="58" y="48" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="900" letter-spacing="2" fill="#1A1A1A">BUILDERS</text>
+  <rect x="185" y="36" width="40" height="2.5" rx="1.25" fill="url(#logoGrad)" opacity="0.5"/>
+</svg>
