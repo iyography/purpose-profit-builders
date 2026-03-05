@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { getAllSprintSubmissions, SprintSubmission } from '@/lib/supabase';
 import { isAdmin, getStorageKey } from '@/lib/auth';
+import { sprintQuestions } from '@/lib/quiz/questions';
 import { socialPosts, communityPosts, skoolPosts } from '@/app/content-library/data';
 import { fullContentLibrary } from '@/app/content-library/bbc-content';
 import { additionalSocialPosts } from '@/app/content-library/bbc-additional';
@@ -287,6 +288,36 @@ export default function AdminDashboard() {
                 ))}
               </div>
 
+              {/* Profile Distribution Chart */}
+              {stats.total > 0 && (
+                <div className="bg-dark-gray rounded-lg border border-off-white/5 p-6 mb-6">
+                  <h3 className="text-lg font-semibold text-off-white mb-4">Profile Distribution</h3>
+                  <div className="space-y-3">
+                    {[
+                      { label: 'Kingdom Starter', value: stats.kingdomStarter, color: 'from-green-500 to-green-600' },
+                      { label: 'Systems Builder', value: stats.systemsBuilder, color: 'from-gold-vivid to-yellow-600' },
+                      { label: 'Explorer', value: stats.explorer, color: 'from-blue-400 to-blue-600' },
+                    ].map(item => {
+                      const pct = stats.total > 0 ? (item.value / stats.total) * 100 : 0;
+                      return (
+                        <div key={item.label} className="flex items-center gap-4">
+                          <div className="w-32 text-sm font-medium text-off-white/70">{item.label}</div>
+                          <div className="flex-1 bg-off-white/5 rounded-full h-7 relative overflow-hidden">
+                            <div
+                              className={`bg-gradient-to-r ${item.color} h-full rounded-full transition-all duration-1000`}
+                              style={{ width: `${pct}%` }}
+                            />
+                            <div className="absolute inset-0 flex items-center px-3 text-xs font-semibold text-off-white">
+                              {item.value} response{item.value !== 1 ? 's' : ''} ({pct.toFixed(0)}%)
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Filters */}
               <div className="bg-dark-gray rounded-lg border border-off-white/5 p-4 mb-6">
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -438,6 +469,11 @@ export default function AdminDashboard() {
                           </div>
                         </div>
 
+                        {/* Body preview (short version) */}
+                        <div className="mb-3 text-xs text-off-white/60 leading-relaxed line-clamp-4 whitespace-pre-wrap">
+                          {post.short}
+                        </div>
+
                         {/* Version buttons row */}
                         <div className="flex gap-1.5 mt-auto pt-3 border-t border-off-white/5">
                           {(['short', 'medium', 'long'] as VersionKey[]).map(v => {
@@ -502,30 +538,34 @@ export default function AdminDashboard() {
                 <button onClick={() => { setShowModal(false); setSelectedSubmission(null); }} className="text-off-white/40 hover:text-off-white text-2xl">&times;</button>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  ['Profile', selectedSubmission.profile_name],
-                  ['Monthly Income', selectedSubmission.monthly_income],
-                  ['Has Offer', selectedSubmission.has_offer ? 'Yes' : 'No'],
-                  ['Offer Type', selectedSubmission.offer_type || 'N/A'],
-                  ['Uses AI', selectedSubmission.uses_ai ? 'Yes' : 'No'],
-                  ['Has Systems', selectedSubmission.has_systems ? 'Yes' : 'No'],
-                  ['Faith Alignment', selectedSubmission.faith_alignment],
-                  ['Date', new Date(selectedSubmission.created_at).toLocaleString()],
-                ].map(([label, value]) => (
-                  <div key={label} className="bg-dark-cream rounded-lg p-3">
-                    <p className="text-[10px] font-medium text-off-white/40 uppercase">{label}</p>
-                    <p className="text-sm text-off-white mt-0.5">{value}</p>
-                  </div>
-                ))}
+              {/* Profile & Date summary */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-dark-cream rounded-lg p-3">
+                  <p className="text-[10px] font-medium text-off-white/40 uppercase">Profile</p>
+                  <p className="text-sm text-off-white mt-0.5 font-semibold">{selectedSubmission.profile_name}</p>
+                </div>
+                <div className="bg-dark-cream rounded-lg p-3">
+                  <p className="text-[10px] font-medium text-off-white/40 uppercase">Date</p>
+                  <p className="text-sm text-off-white mt-0.5">{new Date(selectedSubmission.created_at).toLocaleString()}</p>
+                </div>
               </div>
 
-              {selectedSubmission.biggest_challenge && (
-                <div className="mt-4 bg-dark-cream rounded-lg p-3">
-                  <p className="text-[10px] font-medium text-off-white/40 uppercase">Biggest Challenge</p>
-                  <p className="text-sm text-off-white mt-0.5">{selectedSubmission.biggest_challenge}</p>
-                </div>
-              )}
+              {/* All Questions & Answers */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-gold-vivid uppercase tracking-wider">All Questions &amp; Answers</h3>
+                {sprintQuestions.map((q, idx) => {
+                  const rawAnswer = selectedSubmission.answers?.[q.id as keyof typeof selectedSubmission.answers] as string | undefined;
+                  const answerOption = q.options?.find(o => o.id === rawAnswer);
+                  const displayAnswer = answerOption?.text || rawAnswer || 'No answer';
+                  return (
+                    <div key={q.id} className="bg-dark-cream rounded-lg p-3 border-l-2 border-gold-vivid/30">
+                      <p className="text-[10px] font-semibold text-gold-vivid mb-1">Q{idx + 1}</p>
+                      <p className="text-xs font-medium text-off-white/70 mb-1">{q.question}</p>
+                      <p className="text-sm text-off-white">{displayAnswer}</p>
+                    </div>
+                  );
+                })}
+              </div>
 
               <div className="flex justify-end mt-6">
                 <button onClick={() => { setShowModal(false); setSelectedSubmission(null); }}
