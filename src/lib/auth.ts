@@ -9,6 +9,7 @@ export interface AuthUser {
 
 const USERS: Record<string, { password: string; name: string; role: UserRole; slug: string }> = {
   'davidiya3@gmail.com': { password: 'PPBuilders2026!', name: 'David', role: 'admin', slug: 'admin' },
+  'tlanham@scalesmartpro.com': { password: 'ProfitAdmin123!', name: 'T. Lanham', role: 'admin', slug: 'admin' },
   'theodore@ppbuilders.com': { password: 'Theodore2026!', name: 'Theodore', role: 'member', slug: 'theodore' },
 };
 
