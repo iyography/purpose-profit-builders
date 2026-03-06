@@ -434,11 +434,11 @@ export default function AdminDashboard() {
                   <p className="text-off-white/40">{activeContentTab === 'posted' ? 'No posted content yet. Check posts to mark them as posted.' : 'No posts found.'}</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                <div className="columns-1 md:columns-2 xl:columns-3 gap-4 space-y-4">
                   {currentPosts.map(post => {
                     const isPosted = postedIds.has(post.id);
                     return (
-                      <div key={post.id} className={`bg-dark-gray rounded-lg border p-4 flex flex-col ${isPosted ? 'border-green-500/20 opacity-70' : 'border-off-white/5'}`}>
+                      <div key={post.id} className={`bg-dark-gray rounded-lg border p-4 flex flex-col break-inside-avoid ${isPosted ? 'border-green-500/20 opacity-70' : 'border-off-white/5'}`}>
                         {/* Header row: checkbox + title */}
                         <div className="flex items-start gap-3 mb-3">
                           <button
@@ -480,7 +480,7 @@ export default function AdminDashboard() {
                         </div>
 
                         {/* Body text */}
-                        <div className="flex-1 mb-3 text-xs text-off-white/60 leading-relaxed whitespace-pre-wrap overflow-y-auto max-h-48">
+                        <div className="flex-1 mb-3 text-xs text-off-white/60 leading-relaxed whitespace-pre-wrap">
                           {post[activeVersionByPost[post.id] || 'short']}
                         </div>
 
