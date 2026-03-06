@@ -73,9 +73,9 @@ export default function AdminDashboard() {
   // Content library state
   const [activeContentTab, setActiveContentTab] = useState<ContentTab>('social');
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [copiedVersion, setCopiedVersion] = useState<VersionKey | null>(null);
   const [postedIds, setPostedIds] = useState<Set<string>>(new Set());
   const [contentSearch, setContentSearch] = useState('');
+  const [activeVersionByPost, setActiveVersionByPost] = useState<Record<string, VersionKey>>({});
 
   // Auth check
   useEffect(() => {
@@ -189,11 +189,10 @@ export default function AdminDashboard() {
     ? postedPosts
     : unpostedByTab(activeContentTab as 'social' | 'community' | 'skool');
 
-  const handleCopy = (postId: string, version: VersionKey, text: string) => {
+  const handleCopy = (postId: string, text: string) => {
     navigator.clipboard.writeText(text);
     setCopiedId(postId);
-    setCopiedVersion(version);
-    setTimeout(() => { setCopiedId(null); setCopiedVersion(null); }, 2000);
+    setTimeout(() => { setCopiedId(null); }, 2000);
   };
 
   const togglePosted = (postId: string) => {
@@ -463,26 +462,38 @@ export default function AdminDashboard() {
                           </div>
                         </div>
 
-                        {/* Body preview (short version) */}
-                        <div className="mb-3 text-xs text-off-white/60 leading-relaxed line-clamp-4 whitespace-pre-wrap">
-                          {post.short}
-                        </div>
-
-                        {/* Version buttons row */}
-                        <div className="flex gap-1.5 mt-auto pt-3 border-t border-off-white/5">
+                        {/* Version toggle tabs */}
+                        <div className="flex gap-1 mb-2">
                           {(['short', 'medium', 'long'] as VersionKey[]).map(v => {
-                            const isCopied = copiedId === post.id && copiedVersion === v;
+                            const active = (activeVersionByPost[post.id] || 'short') === v;
                             return (
-                              <button key={v} onClick={() => handleCopy(post.id, v, post[v])}
-                                className={`flex-1 px-2 py-1.5 rounded text-xs font-medium transition-colors capitalize ${
-                                  isCopied
-                                    ? 'bg-green-900/40 text-green-400'
-                                    : 'bg-dark-cream text-off-white/70 hover:bg-gold-vivid hover:text-black'
+                              <button key={v} onClick={() => setActiveVersionByPost(prev => ({ ...prev, [post.id]: v }))}
+                                className={`flex-1 px-2 py-1 rounded text-[10px] font-medium transition-colors capitalize ${
+                                  active
+                                    ? 'bg-gold-vivid text-black'
+                                    : 'bg-dark-cream text-off-white/50 hover:text-off-white/70'
                                 }`}>
-                                {isCopied ? 'Copied!' : v}
+                                {v}
                               </button>
                             );
                           })}
+                        </div>
+
+                        {/* Body text */}
+                        <div className="flex-1 mb-3 text-xs text-off-white/60 leading-relaxed whitespace-pre-wrap overflow-y-auto max-h-48">
+                          {post[activeVersionByPost[post.id] || 'short']}
+                        </div>
+
+                        {/* Copy button */}
+                        <div className="mt-auto pt-3 border-t border-off-white/5">
+                          <button onClick={() => handleCopy(post.id, post[activeVersionByPost[post.id] || 'short'])}
+                            className={`w-full px-3 py-2 rounded text-xs font-medium transition-colors ${
+                              copiedId === post.id
+                                ? 'bg-green-900/40 text-green-400'
+                                : 'bg-gold-vivid text-black hover:bg-gold-warm'
+                            }`}>
+                            {copiedId === post.id ? 'Copied!' : `Copy ${activeVersionByPost[post.id] || 'short'}`}
+                          </button>
                         </div>
                       </div>
                     );
