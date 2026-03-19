@@ -132,6 +132,21 @@ export default function Quiz() {
         console.warn('Database submission failed, continuing to results:', dbError);
       }
 
+      // Send results email
+      try {
+        await fetch('/api/send-results', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to: contactInfo.email,
+            fullName: contactInfo.full_name,
+            result: sprintResult,
+          }),
+        });
+      } catch (emailError) {
+        console.warn('Email send failed, continuing to results:', emailError);
+      }
+
       setStep('results');
     } catch (error) {
       console.error('Error processing assessment:', error);
